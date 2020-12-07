@@ -1,7 +1,7 @@
 ﻿namespace XTI_Core
 {
-    public interface DataRepositoryFactory<T> where T : class
+    public interface DataRepositoryFactory
     {
-        DataRepository<T> Create();
+        DataRepository<T> Create<T>() where T : class;
     }
 }
