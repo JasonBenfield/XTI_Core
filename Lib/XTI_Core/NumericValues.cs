@@ -14,6 +14,7 @@ namespace XTI_Core
         protected NumericValues(T defaultValue)
         {
             DefaultValue = defaultValue;
+            Add(DefaultValue);
         }
 
         protected T DefaultValue { get; }
