@@ -40,6 +40,14 @@ function Core-New-XtiVersion {
     $script:coreConfig | New-XtiVersion @PsBoundParameters
 }
 
+function Core-Xti-Merge {
+    param(
+        [Parameter(Position=0)]
+        [string] $CommitMessage
+    )
+    $script:coreConfig | Xti-Merge @PsBoundParameters
+}
+
 function Core-New-XtiPullRequest {
     param(
         [Parameter(Position=0)]
@@ -59,4 +67,7 @@ function Core-Publish {
         [switch] $Prod
     )
     $script:coreConfig | Xti-PublishPackage @PsBoundParameters
+    if($Prod) {
+        $script:coreConfig | Xti-Merge
+    }
 }

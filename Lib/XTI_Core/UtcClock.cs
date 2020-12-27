@@ -4,8 +4,8 @@ namespace XTI_Core
 {
     public sealed class UtcClock : Clock
     {
-        public DateTime Now() => DateTime.UtcNow;
+        public DateTimeOffset Now() => DateTimeOffset.UtcNow;
 
-        public DateTime Today() => DateTime.UtcNow.Date;
+        public DateTimeOffset Today() => DateTimeOffset.UtcNow.Date;
     }
 }
