@@ -4,18 +4,18 @@ namespace XTI_Core.Fakes
 {
     public sealed class FakeClock : Clock
     {
-        public FakeClock(DateTime? now = null)
+        public FakeClock(DateTimeOffset? now = null)
         {
-            this.now = now ?? DateTime.Now;
+            this.now = now ?? DateTimeOffset.Now;
         }
 
-        private DateTime now;
+        private DateTimeOffset now;
 
-        public DateTime Now() => now;
+        public DateTimeOffset Now() => now;
 
-        public DateTime Today() => now.Date;
+        public DateTimeOffset Today() => now.Date;
 
-        public void Set(DateTime now) => this.now = now;
+        public void Set(DateTimeOffset now) => this.now = now;
 
         public void Add(TimeSpan timeSpan) => now = now.Add(timeSpan);
 

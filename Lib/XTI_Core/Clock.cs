@@ -4,7 +4,7 @@ namespace XTI_Core
 {
     public interface Clock
     {
-        DateTime Now();
-        DateTime Today();
+        DateTimeOffset Now();
+        DateTimeOffset Today();
     }
 }
