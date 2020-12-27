@@ -1,6 +1,5 @@
 ﻿using NUnit.Framework;
 using System;
-using XTI_DB;
 
 namespace XTI_Core.Tests
 {
