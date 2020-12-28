@@ -27,7 +27,7 @@ namespace XTI_Core
             }
             if (end < DateTimeOffset.MaxValue)
             {
-                end = end.Date;
+                end = end.Date.AddDays(1).AddTicks(-1);
             }
             return new DateRange(TimeRange.Between(start, end));
         }
@@ -42,7 +42,7 @@ namespace XTI_Core
         public DateTimeOffset Start { get => timeRange.Start; }
         public DateTimeOffset End { get => timeRange.End; }
 
-        public bool IsInRange(DateTimeOffset value) => timeRange.IsInRange(value.Date);
+        public bool IsInRange(DateTimeOffset value) => timeRange.IsInRange(value);
 
         public bool HasLowerBound() => timeRange.HasLowerBound();
 
