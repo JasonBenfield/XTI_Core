@@ -32,28 +32,28 @@ namespace XTI_Core
             return new DateRange(TimeRange.Between(start, end));
         }
 
-        private readonly TimeRange timeRange;
 
         private DateRange(TimeRange timeRange)
         {
-            this.timeRange = timeRange;
+            TimeRange = timeRange;
         }
 
-        public DateTimeOffset Start { get => timeRange.Start; }
-        public DateTimeOffset End { get => timeRange.End; }
+        public TimeRange TimeRange { get; }
+        public DateTimeOffset Start { get => TimeRange.Start; }
+        public DateTimeOffset End { get => TimeRange.End; }
 
-        public bool IsInRange(DateTimeOffset value) => timeRange.IsInRange(value);
+        public bool IsInRange(DateTimeOffset value) => TimeRange.IsInRange(value);
 
-        public bool HasLowerBound() => timeRange.HasLowerBound();
+        public bool HasLowerBound() => TimeRange.HasLowerBound();
 
-        public bool HasUpperBound() => timeRange.HasUpperBound();
+        public bool HasUpperBound() => TimeRange.HasUpperBound();
 
         public string Format()
         {
             string rangeText;
             if (HasLowerBound() && HasUpperBound())
             {
-                if (Start == End)
+                if (Start.Date == End.Date)
                 {
                     rangeText = $"On {Start.LocalDateTime:M/dd/yy}";
                 }
@@ -92,10 +92,10 @@ namespace XTI_Core
             return base.Equals(obj);
         }
 
-        public bool Equals(DateRange other) => timeRange.Equals(other?.timeRange);
+        public bool Equals(DateRange other) => TimeRange.Equals(other?.TimeRange);
 
-        public bool Equals(TimeRange other) => timeRange.Equals(other);
+        public bool Equals(TimeRange other) => TimeRange.Equals(other);
 
-        public override int GetHashCode() => timeRange.GetHashCode();
+        public override int GetHashCode() => TimeRange.GetHashCode();
     }
 }
