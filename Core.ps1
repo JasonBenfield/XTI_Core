@@ -33,7 +33,7 @@ function Core-New-XtiVersion {
     param(
         [Parameter(Position=0)]
         [ValidateSet("major", "minor", "patch")]
-        $VersionType = "minor",
+        $VersionType,
         [ValidateSet("Development", "Production", "Staging", "Test")]
         $EnvName = "Production"
     )

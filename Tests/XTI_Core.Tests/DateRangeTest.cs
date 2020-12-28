@@ -49,8 +49,9 @@ namespace XTI_Core.Tests
             var dateRange = DateRange.On(exact);
             Assert.That(dateRange.IsInRange(exact), Is.True);
             Assert.That(dateRange.IsInRange(value), Is.True);
-            Assert.That(dateRange.IsInRange(exact.AddDays(-1)), Is.False);
-            Assert.That(dateRange.IsInRange(exact.AddDays(1)), Is.False);
+            Assert.That(dateRange.IsInRange(exact.Date.AddDays(-1)), Is.False);
+            Assert.That(dateRange.IsInRange(exact.Date.AddDays(1)), Is.False);
+            Assert.That(dateRange.IsInRange(exact.Date.AddDays(1).AddMilliseconds(-1)), Is.True);
         }
     }
 }
