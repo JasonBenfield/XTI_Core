@@ -4,11 +4,16 @@ namespace XTI_Core
 {
     public sealed class ErrorModel : IEquatable<ErrorModel>
     {
-        public ErrorModel(string message, string source = null)
+        public ErrorModel(string message) : this(message, "", "")
+        {
+        }
+
+        public ErrorModel(string message, string caption, string source)
         {
             Message = message;
-            Source = source;
-            value = $"{Message}|{Source}";
+            Caption = caption ?? "";
+            Source = source ?? "";
+            value = $"{Message}|{Caption}|{Source}";
             hashCode = value.GetHashCode();
         }
 
@@ -16,6 +21,7 @@ namespace XTI_Core
         private readonly int hashCode;
 
         public string Message { get; }
+        public string Caption { get; }
         public string Source { get; }
 
         public override bool Equals(object obj) => Equals(obj as ErrorModel);
