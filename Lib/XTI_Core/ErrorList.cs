@@ -7,8 +7,8 @@ namespace XTI_Core
     {
         private readonly List<ErrorModel> errors = new List<ErrorModel>();
 
-        public void Add(string message, string source = null) => Add(new ErrorModel(message, source));
-
+        public void Add(string message) => Add(new ErrorModel(message));
+        public void Add(string message, string caption, string source) => Add(new ErrorModel(message, caption, source));
         public void Add(ErrorModel error) => errors.Add(error);
 
         public bool Any() => errors.Count > 0;
