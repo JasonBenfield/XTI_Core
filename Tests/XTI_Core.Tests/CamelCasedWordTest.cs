@@ -38,5 +38,12 @@ namespace XTI_Core.Tests
             var words = new CamelCasedWord("Test12TextEND").Words();
             Assert.That(words, Is.EqualTo(new[] { "Test", "12", "Text", "END" }));
         }
+
+        [Test]
+        public void ShouldSplitCamelCasedWordStartingWithALowerCaseWord()
+        {
+            var words = new CamelCasedWord("testText").Words();
+            Assert.That(words, Is.EqualTo(new[] { "test", "Text" }));
+        }
     }
 }
