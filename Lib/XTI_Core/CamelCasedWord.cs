@@ -8,17 +8,29 @@ namespace XTI_Core
     public sealed class CamelCasedWord : IEquatable<CamelCasedWord>, IEquatable<string>
     {
         private readonly string word;
+        private readonly bool isFirstWordLower = false;
         private static readonly Regex camelCasedRegex = new Regex("(([A-Z]{2,})(?!([a-z]+)))|([A-Z]{1}[a-z]+)|(\\d+)");
 
         public CamelCasedWord(string word)
         {
             this.word = word ?? "";
+            if (this.word.Length > 0 && char.IsLower(this.word[0]))
+            {
+                var modified = char.ToUpper(this.word[0]).ToString();
+                if (this.word.Length > 1)
+                {
+                    modified += this.word.Substring(1);
+                }
+                this.word = modified;
+                isFirstWordLower = true;
+            }
         }
 
         public IEnumerable<string> Words()
-        {
-            return camelCasedRegex.Matches(word).SelectMany(m => m.Captures).Select(c => c.Value);
-        }
+            => camelCasedRegex
+                .Matches(word)
+                .SelectMany(m => m.Captures)
+                .Select((c, i) => i == 0 && isFirstWordLower ? c.Value.ToLower() : c.Value);
 
         public override bool Equals(object obj)
         {

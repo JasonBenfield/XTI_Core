@@ -47,7 +47,7 @@ namespace XTI_Core
         private readonly int hashCode;
 
         public T Value { get; }
-        public string DisplayText { get; }
+        public string DisplayText { get; protected set; }
 
         public bool IsBlank() => string.IsNullOrWhiteSpace(DisplayText);
 
