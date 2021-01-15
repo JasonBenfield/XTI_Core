@@ -15,7 +15,7 @@ namespace XTI_Core
 
         private static string normalizeValue(string value)
         {
-            string normalized = value ?? "";
+            var normalized = value ?? "";
             if (separatorRegex.IsMatch(value))
             {
                 normalized = separatorRegex.Replace(normalized.ToLower(), "_");
@@ -35,5 +35,10 @@ namespace XTI_Core
                         .Split('_')
                         .Select(word => new CapitalizedWord(word).Value())
                 );
+
+        protected override bool _Equals(string other)
+        {
+            return base._Equals(normalizeValue(other));
+        }
     }
 }
