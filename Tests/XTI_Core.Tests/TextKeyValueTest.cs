@@ -36,6 +36,20 @@ namespace XTI_Core.Tests
 
         [Test]
         [
+            TestCase("one", "One"),
+            TestCase("OneTwo", "one_two"),
+            TestCase("OneTwo", "one two"),
+            TestCase("OneTwo", "OneTwo"),
+            TestCase("OneTwo", "oneTwo")
+        ]
+        public void ShouldBeEqualToString(string keyValue, string otherValue)
+        {
+            var key = new TestKey(keyValue);
+            Assert.That(key.Equals(otherValue), Is.True);
+        }
+
+        [Test]
+        [
             TestCase("one", "Two"),
             TestCase("one_two", "One_Three")
         ]

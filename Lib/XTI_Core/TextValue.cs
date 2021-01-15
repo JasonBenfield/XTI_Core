@@ -5,11 +5,13 @@ namespace XTI_Core
 {
     public class TextValue : SemanticType<string>
     {
-        public TextValue(string value) : base(value)
+        public TextValue(string value)
+            : this(value, value)
         {
         }
 
-        public TextValue(string value, string displayText) : base(value, displayText)
+        public TextValue(string value, string displayText)
+            : base(value, displayText)
         {
         }
 
