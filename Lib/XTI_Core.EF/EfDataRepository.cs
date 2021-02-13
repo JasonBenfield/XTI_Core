@@ -11,11 +11,11 @@ namespace XTI_Core.EF
         private readonly DbContext dbContext;
         private readonly DbSet<T> dbSet;
 
-        public EfDataRepository(UnitOfWork unitOfWork, DbContext dbContext, DbSet<T> dbSet)
+        public EfDataRepository(DbContext dbContext)
         {
-            this.unitOfWork = unitOfWork;
+            unitOfWork = new UnitOfWork(dbContext);
             this.dbContext = dbContext;
-            this.dbSet = dbSet;
+            dbSet = dbContext.Set<T>();
         }
 
         public Task Create(T record)
