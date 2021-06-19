@@ -25,7 +25,8 @@ namespace XTI_Core
             (
                 new[]
                 {
-                    Environment.GetEnvironmentVariable("XTI_AppData")
+                    Environment.GetEnvironmentVariable("XTI_Dir"),
+                    "AppData"
                 }
                 .Union(subFolderNames)
                 .ToArray()
