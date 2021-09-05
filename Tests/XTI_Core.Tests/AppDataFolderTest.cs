@@ -9,15 +9,6 @@ namespace XTI_Core.Tests
     public sealed class AppDataFolderTest
     {
         [Test]
-        public void ShouldGetPathFromEnvironmentVariable()
-        {
-            var input = setup();
-            var appDataPath = "c:\\xtiappdata";
-            Environment.SetEnvironmentVariable("XTI_AppData", appDataPath);
-            Assert.That(input.AppDataFolder.Path(), Is.EqualTo(appDataPath));
-        }
-
-        [Test]
         public void ShouldBuildPathFromSubFolder()
         {
             var input = setup();
@@ -28,6 +19,7 @@ namespace XTI_Core.Tests
                 (
                     Path.Combine(input.BasePath, "Shared")
                 )
+                .IgnoreCase
             );
         }
 
@@ -43,6 +35,7 @@ namespace XTI_Core.Tests
                 (
                     Path.Combine(input.BasePath, input.HostEnv.EnvironmentName)
                 )
+                .IgnoreCase
             );
         }
 
@@ -61,6 +54,7 @@ namespace XTI_Core.Tests
                 (
                     Path.Combine(input.BasePath, input.HostEnv.EnvironmentName, "Shared")
                 )
+                .IgnoreCase
             );
         }
 
@@ -74,7 +68,6 @@ namespace XTI_Core.Tests
                 .Build();
             var scope = host.Services.CreateScope();
             var input = new TestInput(scope.ServiceProvider);
-            Environment.SetEnvironmentVariable("XTI_AppData", input.BasePath);
             return input;
         }
 
