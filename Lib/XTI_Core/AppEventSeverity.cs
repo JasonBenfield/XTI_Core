@@ -14,6 +14,7 @@ namespace XTI_Core
                 AccessDenied = add(80, "Access Denied");
                 AppError = add(70, "App Error");
                 ValidationFailed = add(60, "Validation Failed");
+                Information = add(50, "Information");
             }
             private AppEventSeverity add(int value, string displayText) =>
                 Add(new AppEventSeverity(value, displayText));
@@ -22,6 +23,7 @@ namespace XTI_Core
             public AppEventSeverity AccessDenied { get; }
             public AppEventSeverity ValidationFailed { get; }
             public AppEventSeverity AppError { get; }
+            public AppEventSeverity Information { get; }
         }
 
         public static readonly AppEventSeverities Values = new AppEventSeverities();
