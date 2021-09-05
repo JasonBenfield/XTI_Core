@@ -5,69 +5,44 @@ $script:coreConfig = [PSCustomObject]@{
     RepoName = "XTI_Core"
     AppName = "XTI_Core"
     AppType = "Package"
-    ProjectDir = ""
 }
 
-function Core-New-XtiIssue {
+function Core-NewVersion {
+    param(
+        [Parameter(Position=0)]
+        [ValidateSet("major", "minor", "patch")]
+        $VersionType
+    )
+    $script:coreConfig | New-XtiVersion @PsBoundParameters
+}
+
+function Core-NewIssue {
     param(
         [Parameter(Mandatory, Position=0)]
         [string] $IssueTitle,
-        $Labels = @(),
-        [string] $Body = "",
         [switch] $Start
     )
     $script:coreConfig | New-XtiIssue @PsBoundParameters
 }
 
-function Core-Xti-StartIssue {
+function Core-StartIssue {
     param(
         [Parameter(Position=0)]
-        [long]$IssueNumber = 0,
-        $IssueBranchTitle = "",
-        $AssignTo = ""
+        [long]$IssueNumber = 0
     )
     $script:coreConfig | Xti-StartIssue @PsBoundParameters
 }
 
-function Core-New-XtiVersion {
-    param(
-        [Parameter(Position=0)]
-        [ValidateSet("major", "minor", "patch")]
-        $VersionType,
-        [ValidateSet("Development", "Production", "Staging", "Test")]
-        $EnvName = "Production"
-    )
-    $script:coreConfig | New-XtiVersion @PsBoundParameters
-}
-
-function Core-Xti-Merge {
-    param(
-        [Parameter(Position=0)]
-        [string] $CommitMessage
-    )
-    $script:coreConfig | Xti-Merge @PsBoundParameters
-}
-
-function Core-New-XtiPullRequest {
-    param(
-        [Parameter(Position=0)]
-        [string] $CommitMessage
-    )
-    $script:coreConfig | New-XtiPullRequest @PsBoundParameters
-}
-
-function Core-Xti-PostMerge {
+function Core-CompleteIssue {
     param(
     )
-    $script:coreConfig | Xti-PostMerge @PsBoundParameters
+    $script:coreConfig | Xti-CompleteIssue @PsBoundParameters
 }
 
 function Core-Publish {
     param(
-        [switch] $Prod
+        [ValidateSet("Development", "Production", "Staging", "Test")]
+        $EnvName = "Development"
     )
-    $script:coreConfig | Xti-PublishPackage @PsBoundParameters
-    if($Prod) {
-        $script:coreConfig | Xti-Merge
-    }
+    $script:coreConfig | Xti-Publish @PsBoundParameters
 }
