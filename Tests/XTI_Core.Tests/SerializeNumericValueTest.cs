@@ -23,6 +23,24 @@ namespace XTI_Core.Tests
             Assert.That(deserialized.HourlyWages, Is.EqualTo(12.34));
         }
 
+        [Test]
+        public void ShouldDeserializeNumericValueFromNumber()
+        {
+            var jsonOptions = new JsonSerializerOptions();
+            jsonOptions.Converters.Add(new NumericValueJsonConverter());
+            var deserialized = JsonSerializer.Deserialize<Employee>("{ \"EmployeeType\": 10 }", jsonOptions);
+            Assert.That(deserialized.EmployeeType, Is.EqualTo(EmployeeType.Values.Temp));
+        }
+
+        [Test]
+        public void ShouldDeserializeNumericValueFromString()
+        {
+            var jsonOptions = new JsonSerializerOptions();
+            jsonOptions.Converters.Add(new NumericValueJsonConverter());
+            var deserialized = JsonSerializer.Deserialize<Employee>("{ \"EmployeeType\": \"Permanent\" }", jsonOptions);
+            Assert.That(deserialized.EmployeeType, Is.EqualTo(EmployeeType.Values.Permanent));
+        }
+
         private sealed class Employee
         {
             public EmployeeType EmployeeType { get; set; }

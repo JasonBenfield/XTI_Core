@@ -12,28 +12,56 @@ namespace XTI_Core
 
         public override NumericValue Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            if (reader.TokenType != JsonTokenType.StartObject)
+            NumericValue numericValue;
+            if (reader.TokenType == JsonTokenType.Number)
             {
-                throw new JsonException("Expected StartObject token");
+                var value = reader.GetInt32();
+                numericValue = valueFromInt(typeToConvert, value);
             }
-            int value = 0;
-            while (reader.Read() && reader.TokenType != JsonTokenType.EndObject)
+            else if (reader.TokenType == JsonTokenType.String)
             {
-                if (reader.TokenType != JsonTokenType.PropertyName)
-                {
-                    throw new JsonException("Expected PropertyName token");
-                }
-                var propName = reader.GetString();
-                reader.Read();
-                if (propName == "Value")
-                {
-                    value = reader.GetInt32();
-                }
+                var value = reader.GetString();
+                numericValue = valueFromString(typeToConvert, value);
             }
+            else if (reader.TokenType == JsonTokenType.StartObject)
+            {
+                var value = 0;
+                while (reader.Read() && reader.TokenType != JsonTokenType.EndObject)
+                {
+                    if (reader.TokenType == JsonTokenType.PropertyName)
+                    {
+                        var propName = reader.GetString();
+                        reader.Read();
+                        if (propName == "Value")
+                        {
+                            value = reader.GetInt32();
+                        }
+                    }
+                }
+                numericValue = valueFromInt(typeToConvert, value);
+            }
+            else
+            {
+                numericValue = valueFromInt(typeToConvert, 0);
+            }
+            return numericValue;
+        }
+
+        private static NumericValue valueFromInt(Type typeToConvert, int value)
+        {
             var valuesField = typeToConvert.GetField("Values", BindingFlags.Static | BindingFlags.Public);
             var values = valuesField.GetValue(typeToConvert);
             var valueMethod = valuesField.FieldType.GetMethod("Value", new[] { typeof(int) });
             var numericValue = valueMethod.Invoke(values, new[] { (object)value });
+            return (NumericValue)numericValue;
+        }
+
+        private static NumericValue valueFromString(Type typeToConvert, string value)
+        {
+            var valuesField = typeToConvert.GetField("Values", BindingFlags.Static | BindingFlags.Public);
+            var values = valuesField.GetValue(typeToConvert);
+            var valueMethod = valuesField.FieldType.GetMethod("Value", new[] { typeof(string) });
+            var numericValue = valueMethod.Invoke(values, new[] { value });
             return (NumericValue)numericValue;
         }
 
