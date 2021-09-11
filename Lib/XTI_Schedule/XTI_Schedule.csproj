@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="XTI_Core" Version="1.8.14" />
+    <ProjectReference Include="..\XTI_Core\XTI_Core.csproj" />
   </ItemGroup>
 
 </Project>
