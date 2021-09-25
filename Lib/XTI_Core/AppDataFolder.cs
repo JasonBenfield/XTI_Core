@@ -8,15 +8,17 @@ namespace XTI_Core
 {
     public sealed class AppDataFolder
     {
+        private readonly string path;
         private readonly List<string> subFolderNames = new List<string>();
 
-        public AppDataFolder()
-            : this(new string[] { })
+        internal AppDataFolder(string path)
+            : this(path, new string[] { })
         {
         }
 
-        private AppDataFolder(IEnumerable<string> subFolderNames)
+        private AppDataFolder(string path, IEnumerable<string> subFolderNames)
         {
+            this.path = path;
             this.subFolderNames.AddRange(subFolderNames);
         }
 
@@ -35,9 +37,9 @@ namespace XTI_Core
         public string FilePath(string fileName) => System.IO.Path.Combine(Path(), fileName);
 
         public AppDataFolder WithSubFolder(string name)
-            => new AppDataFolder(subFolderNames.Union(new[] { name }));
+            => new AppDataFolder(path, subFolderNames.Union(new[] { name }));
 
-        public AppDataFolder WithHostEnvironment(IHostEnvironment hostEnv)
+        internal AppDataFolder WithHostEnvironment(IHostEnvironment hostEnv)
             => WithSubFolder(hostEnv.EnvironmentName);
 
         public void TryCreate()

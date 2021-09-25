@@ -8,16 +8,20 @@ namespace XTI_Core.Tests
 {
     public sealed class AppDataFolderTest
     {
+        private const string BasePath = @"c:\xti\appdata";
+
         [Test]
         public void ShouldBuildPathFromSubFolder()
         {
-            var input = setup();
+            var envName = "Development";
+            var services = setup(envName);
+            var appDataFolder = services.GetService<AppDataFolder>();
             Assert.That
             (
-                input.AppDataFolder.WithSubFolder("Shared").Path(),
+                appDataFolder.WithSubFolder("Test").Path(),
                 Is.EqualTo
                 (
-                    Path.Combine(input.BasePath, "Shared")
+                    Path.Combine(BasePath, envName, "Test")
                 )
                 .IgnoreCase
             );
@@ -26,14 +30,15 @@ namespace XTI_Core.Tests
         [Test]
         public void ShouldBuildPathFromEnvironmentName()
         {
-            var input = setup();
-            input.HostEnv.EnvironmentName = "Development";
+            var envName = "Development";
+            var services = setup(envName);
+            var appDataFolder = services.GetService<AppDataFolder>();
             Assert.That
             (
-                input.AppDataFolder.WithHostEnvironment(input.HostEnv).Path(),
+                appDataFolder.Path(),
                 Is.EqualTo
                 (
-                    Path.Combine(input.BasePath, input.HostEnv.EnvironmentName)
+                    Path.Combine(BasePath, envName)
                 )
                 .IgnoreCase
             );
@@ -42,46 +47,35 @@ namespace XTI_Core.Tests
         [Test]
         public void ShouldBuildPathFromSubFolders()
         {
-            var input = setup();
-            input.HostEnv.EnvironmentName = "Development";
+            var envName = "Development";
+            var services = setup(envName);
+            var appDataFolder = services.GetService<AppDataFolder>();
             Assert.That
             (
-                input.AppDataFolder
-                    .WithHostEnvironment(input.HostEnv)
-                    .WithSubFolder("Shared")
+                appDataFolder
+                    .WithSubFolder("Test")
+                    .WithSubFolder("SubFolder")
                     .Path(),
                 Is.EqualTo
                 (
-                    Path.Combine(input.BasePath, input.HostEnv.EnvironmentName, "Shared")
+                    Path.Combine(BasePath, envName, "Test", "Subfolder")
                 )
                 .IgnoreCase
             );
         }
 
-        private TestInput setup()
+        private IServiceProvider setup(string envName)
         {
+            Environment.SetEnvironmentVariable("DOTNET_ENVIRONMENT", envName);
             var host = Host.CreateDefaultBuilder()
                 .ConfigureServices(services =>
                 {
-                    services.AddSingleton<AppDataFolder>();
+                    services.AddSingleton<XtiFolder>();
+                    services.AddSingleton(sp => sp.GetService<XtiFolder>().AppDataFolder());
                 })
                 .Build();
             var scope = host.Services.CreateScope();
-            var input = new TestInput(scope.ServiceProvider);
-            return input;
-        }
-
-        private class TestInput
-        {
-            public TestInput(IServiceProvider sp)
-            {
-                AppDataFolder = sp.GetService<AppDataFolder>();
-                HostEnv = sp.GetService<IHostEnvironment>();
-            }
-
-            public string BasePath { get; } = @"c:\xti\appdata";
-            public AppDataFolder AppDataFolder { get; }
-            public IHostEnvironment HostEnv { get; }
+            return scope.ServiceProvider;
         }
     }
 }
