@@ -11,20 +11,17 @@ namespace XTI_Configuration.Extensions
         public static void UseXtiConfiguration(this IConfigurationBuilder config, IHostEnvironment hostEnv, string[] args)
         {
             config.Sources.Clear();
-            var appDataFolder = new AppDataFolder().WithSubFolder("Shared");
-            config
-                .AddJsonFile
+            var xtiFolder = new XtiFolder(hostEnv);
+            var sharedSettingsPaths = xtiFolder.SharedSettingsPaths();
+            foreach (var path in sharedSettingsPaths)
+            {
+                config.AddJsonFile
                 (
-                    appDataFolder.FilePath("appsettings.json"),
-                    optional: true,
-                    reloadOnChange: true
-                )
-                .AddJsonFile
-                (
-                    appDataFolder.FilePath($"appsettings.{hostEnv.EnvironmentName}.json"),
+                    path,
                     optional: true,
                     reloadOnChange: true
                 );
+            }
             var assembly = Assembly.GetEntryAssembly();
             var resourceStream = assembly.GetManifestResourceStream($"{assembly.GetName().Name}.appsettings.json");
             if (resourceStream != null)
@@ -32,6 +29,16 @@ namespace XTI_Configuration.Extensions
                 config.AddJsonStream(resourceStream);
             }
             resourceStream = assembly.GetManifestResourceStream($"{assembly.GetName().Name}.appsettings.{hostEnv.EnvironmentName}.json");
+            if (resourceStream != null)
+            {
+                config.AddJsonStream(resourceStream);
+            }
+            resourceStream = assembly.GetManifestResourceStream($"{assembly.GetName().Name}.appsettings.private.json");
+            if (resourceStream != null)
+            {
+                config.AddJsonStream(resourceStream);
+            }
+            resourceStream = assembly.GetManifestResourceStream($"{assembly.GetName().Name}.appsettings.{hostEnv.EnvironmentName}.private.json");
             if (resourceStream != null)
             {
                 config.AddJsonStream(resourceStream);
