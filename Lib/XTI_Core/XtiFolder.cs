@@ -19,6 +19,8 @@ namespace XTI_Core
             }
         }
 
+        public string FolderPath() => path;
+
         public string[] SharedSettingsPaths()
         {
             var sharedAppDataFolder = SharedAppDataFolder();
@@ -45,6 +47,8 @@ namespace XTI_Core
 
         private AppDataFolder getAppDataFolder()
             => new AppDataFolder(Path.Combine(path, "AppData"));
+
+        public string ToolsPath() => Path.Combine(path, "Tools");
 
         public string InstallPath(string appName, string appType)
             => InstallPath(appName, appType, "");

@@ -1,11 +1,7 @@
-﻿using Microsoft.Extensions.Hosting;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using NUnit.Framework;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
 using System.IO;
 
 namespace XTI_Core.Tests
@@ -13,6 +9,32 @@ namespace XTI_Core.Tests
     sealed class XtiFolderTest
     {
         private const string XtiDir = @"c:\xti";
+
+        [Test]
+        public void ShouldReturnXtiFolder()
+        {
+            const string envName = "Development";
+            var services = setup(envName);
+            var xtiFolder = services.GetService<XtiFolder>();
+            Assert.That
+            (
+                xtiFolder.FolderPath(),
+                Is.EqualTo(XtiDir).IgnoreCase
+            );
+        }
+
+        [Test]
+        public void ShouldReturnToolsPath()
+        {
+            const string envName = "Development";
+            var services = setup(envName);
+            var xtiFolder = services.GetService<XtiFolder>();
+            Assert.That
+            (
+                xtiFolder.ToolsPath(),
+                Is.EqualTo(Path.Combine(XtiDir, "Tools")).IgnoreCase
+            );
+        }
 
         [Test]
         public void ShouldReturnSharedAppDataFolder()
