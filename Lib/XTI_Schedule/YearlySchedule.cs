@@ -6,15 +6,15 @@ namespace XTI_Schedule
 {
     public sealed class YearlySchedule : IDaySchedule
     {
-        private readonly YearDay[] yearDays;
-
-        public YearlySchedule(params YearDay[] yearDays)
+        public YearlySchedule(params YearDay[] days)
         {
-            this.yearDays = yearDays;
+            Days = days;
         }
 
+        internal YearDay[] Days { get; }
+
         public bool IsInRange(DateTimeOffset value)
-            => yearDays.Any(d => d.ToDate(value) == value.Date);
+            => Days.Any(d => d.ToDate(value) == value.Date);
 
         public DateTime[] AllowedDates(DateRange range)
             => range.Dates().Where(d => IsInRange(d)).ToArray();

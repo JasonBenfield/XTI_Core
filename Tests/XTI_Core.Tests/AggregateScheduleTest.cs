@@ -17,11 +17,7 @@ namespace XTI_Core.Tests
         {
             var schedule = new AggregateSchedule
             (
-                new Schedule
-                (
-                    new WeeklySchedule(DayOfWeek.Monday),
-                    TimeRange.AllDay()
-                )
+                Schedule.On(DayOfWeek.Monday).At(TimeRange.AllDay())
             );
             var result = schedule.IsInSchedule(new DateTime(2020, 10, 19, 12, 0, 0));
             Assert.That(result, Is.True, "Should be scheduled by day of week");
@@ -32,11 +28,7 @@ namespace XTI_Core.Tests
         {
             var schedule = new AggregateSchedule
             (
-                new Schedule
-                (
-                    new WeeklySchedule(DayOfWeek.Monday),
-                    TimeRange.AllDay()
-                )
+                Schedule.On(DayOfWeek.Monday).At(TimeRange.AllDay())
             );
             var result = schedule.IsInSchedule(new DateTime(2020, 10, 20, 12, 0, 0));
             Assert.That(result, Is.False, "Should not be scheduled when not the day of week");
@@ -47,11 +39,8 @@ namespace XTI_Core.Tests
         {
             var schedule = new AggregateSchedule
             (
-                new Schedule
-                (
-                    new WeeklySchedule(DayOfWeek.Monday),
-                    new TimeRange(new Time(10, 0), TimeSpan.FromHours(2))
-                )
+                Schedule.On(DayOfWeek.Monday)
+                    .At(TimeRange.From(10, 0).For(2).Hours())
             );
             var result = schedule.IsInSchedule(new DateTime(2020, 10, 19, 8, 0, 0));
             Assert.That(result, Is.False, "Should not be in schedule");
@@ -62,12 +51,12 @@ namespace XTI_Core.Tests
         {
             var schedule = new AggregateSchedule
             (
-                new Schedule
-                (
-                    new WeeklySchedule(DayOfWeek.Monday),
-                    new TimeRange(new Time(10, 0), TimeSpan.FromHours(2)),
-                    new TimeRange(new Time(17, 0), TimeSpan.FromHours(2))
-                )
+                Schedule.On(DayOfWeek.Monday)
+                    .At
+                    (
+                        TimeRange.From(10, 0).For(2).Hours(),
+                        TimeRange.From(17, 0).For(2).Hours()
+                    )
             );
             var result = schedule.IsInSchedule(new DateTime(2020, 10, 19, 18, 0, 0));
             Assert.That(result, Is.True, "Should be in schedule");
@@ -78,15 +67,100 @@ namespace XTI_Core.Tests
         {
             var schedule = new AggregateSchedule
             (
-                new Schedule
-                (
-                    new WeeklySchedule(DayOfWeek.Monday, DayOfWeek.Wednesday),
-                    new TimeRange(new Time(10, 0), TimeSpan.FromHours(2)),
-                    new TimeRange(new Time(17, 0), TimeSpan.FromHours(2))
-                )
+                Schedule.On(DayOfWeek.Monday, DayOfWeek.Wednesday)
+                    .At
+                    (
+                        TimeRange.From(10, 0).For(2).Hours(),
+                        TimeRange.From(17, 0).For(2).Hours()
+                    )
             );
             var result = schedule.IsInSchedule(new DateTime(2020, 10, 21, 18, 0, 0));
             Assert.That(result, Is.True, "Should be in schedule");
+        }
+
+        [Test]
+        public void ShouldDeserializeSchedule()
+        {
+            var schedule = new AggregateSchedule
+            (
+                Schedule.On(DayOfWeek.Monday)
+                    .At(TimeRange.From(10, 0).ForOneHour()),
+                Schedule.On(new MonthDay(15))
+                    .At(TimeRange.From(11, 0).ForOneHour()),
+                Schedule.First(DayOfWeek.Monday).OfEveryMonth()
+                    .At(TimeRange.From(12, 0).ForOneHour()),
+                Schedule.On(new YearDay(10, 13))
+                    .At(TimeRange.From(13, 0).ForOneHour()),
+                Schedule.First(DayOfWeek.Tuesday).Of(Months.October)
+                    .At(TimeRange.From(14, 0).ForOneHour()),
+                Schedule.Every(2).Weeks().Starting(new DateTime(2021, 10, 12))
+                    .At(TimeRange.From(15, 0).ForOneHour())
+            );
+            var serialized = schedule.Serialize();
+            var deserialized = AggregateSchedule.Deserialize(serialized);
+            Assert.That
+            (
+                deserialized.DateTimeRanges
+                (
+                    DateRange.Between(new DateTime(2021, 10, 1), new DateTime(2021, 10, 31))
+                ),
+                Is.EqualTo
+                (
+                    new[]
+                    {
+                        DateTimeRange.Between
+                        (
+                            new DateTime(2021, 10, 4, 10, 0, 0),
+                            new DateTime(2021, 10, 4, 11, 0, 0)
+                        ),
+                        DateTimeRange.Between
+                        (
+                            new DateTime(2021, 10, 4, 12, 0, 0),
+                            new DateTime(2021, 10, 4, 13, 0, 0)
+                        ),
+                        DateTimeRange.Between
+                        (
+                            new DateTime(2021, 10, 5, 14, 0, 0),
+                            new DateTime(2021, 10, 5, 15, 0, 0)
+                        ),
+                        DateTimeRange.Between
+                        (
+                            new DateTime(2021, 10, 11, 10, 0, 0),
+                            new DateTime(2021, 10, 11, 11, 0, 0)
+                        ),
+                        DateTimeRange.Between
+                        (
+                            new DateTime(2021, 10, 12, 15, 0, 0),
+                            new DateTime(2021, 10, 12, 16, 0, 0)
+                        ),
+                        DateTimeRange.Between
+                        (
+                            new DateTime(2021, 10, 13, 13, 0, 0),
+                            new DateTime(2021, 10, 13, 14, 0, 0)
+                        ),
+                        DateTimeRange.Between
+                        (
+                            new DateTime(2021, 10, 15, 11, 0, 0),
+                            new DateTime(2021, 10, 15, 12, 0, 0)
+                        ),
+                        DateTimeRange.Between
+                        (
+                            new DateTime(2021, 10, 18, 10, 0, 0),
+                            new DateTime(2021, 10, 18, 11, 0, 0)
+                        ),
+                        DateTimeRange.Between
+                        (
+                            new DateTime(2021, 10, 25, 10, 0, 0),
+                            new DateTime(2021, 10, 25, 11, 0, 0)
+                        ),
+                        DateTimeRange.Between
+                        (
+                            new DateTime(2021, 10, 26, 15, 0, 0),
+                            new DateTime(2021, 10, 26, 16, 0, 0)
+                        )
+                    }
+                )
+            );
         }
 
         [Test]

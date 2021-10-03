@@ -6,10 +6,6 @@ namespace XTI_Schedule
 {
     public sealed class PeriodicSchedule : IDaySchedule
     {
-        private readonly int frequency;
-        private readonly DateInterval interval;
-        private readonly DateTime startDate;
-
         public static Builder2 EveryDay() => new Builder1(1).Days();
 
         public static Builder2 EveryWeek() => new Builder1(1).Weeks();
@@ -27,47 +23,51 @@ namespace XTI_Schedule
 
         public PeriodicSchedule(int frequency, DateInterval interval, DateTime startDate)
         {
-            this.frequency = frequency;
-            this.interval = interval;
-            this.startDate = startDate.Date;
+            Frequency = frequency;
+            Interval = interval;
+            StartDate = startDate.Date;
         }
+
+        internal int Frequency { get; }
+        internal DateInterval Interval { get; }
+        internal DateTime StartDate { get; }
 
         public bool IsInRange(DateTimeOffset value)
         {
             var dateValue = value.Date;
-            if (dateValue < startDate)
+            if (dateValue < StartDate)
             {
                 return false;
             }
-            if (startDate == dateValue)
+            if (StartDate == dateValue)
             {
                 return true;
             }
-            else if (interval == DateInterval.Days || interval == DateInterval.Weeks)
+            else if (Interval == DateInterval.Days || Interval == DateInterval.Weeks)
             {
-                var numberOfDays = frequency;
-                if (interval == DateInterval.Weeks)
+                var numberOfDays = Frequency;
+                if (Interval == DateInterval.Weeks)
                 {
-                    numberOfDays = frequency * 7;
+                    numberOfDays = Frequency * 7;
                 }
-                var ts = dateValue - startDate;
+                var ts = dateValue - StartDate;
                 return ts.TotalDays % numberOfDays == 0;
             }
-            else if (interval == DateInterval.Months)
+            else if (Interval == DateInterval.Months)
             {
-                var date = startDate.Date;
+                var date = StartDate.Date;
                 while (date < dateValue)
                 {
-                    date = date.AddMonths(frequency);
+                    date = date.AddMonths(Frequency);
                 }
                 return date == dateValue;
             }
-            else if (interval == DateInterval.Years)
+            else if (Interval == DateInterval.Years)
             {
-                var date = startDate.Date;
+                var date = StartDate.Date;
                 while (date < dateValue)
                 {
-                    date = date.AddYears(frequency);
+                    date = date.AddYears(Frequency);
                 }
                 return date == dateValue;
             }

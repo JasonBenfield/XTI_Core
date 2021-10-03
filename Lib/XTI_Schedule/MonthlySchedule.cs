@@ -6,15 +6,15 @@ namespace XTI_Schedule
 {
     public sealed class MonthlySchedule : IDaySchedule
     {
-        private readonly MonthDay[] days;
-
         public MonthlySchedule(params MonthDay[] days)
         {
-            this.days = days ?? new MonthDay[] { };
+            Days = days ?? new MonthDay[] { };
         }
 
+        internal MonthDay[] Days { get; }
+
         public bool IsInRange(DateTimeOffset value)
-            => days.Any(d => d.ToDate(value) == value.Date);
+            => Days.Any(d => d.ToDate(value) == value.Date);
 
         public DateTime[] AllowedDates(DateRange range)
             => range

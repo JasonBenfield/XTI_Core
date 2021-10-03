@@ -24,9 +24,11 @@ namespace XTI_Core
             );
 
         public static DateTimeRange Between(DateTimeOffset start, DateTimeOffset end)
-        {
-            return new DateTimeRange(start, end);
-        }
+            => new DateTimeRange(start, end);
+
+        public static Builder1 From(DateTime start) => From(new DateTimeOffset(start));
+
+        public static Builder1 From(DateTimeOffset start) => new Builder1(start);
 
         private readonly string value;
         private readonly int hashCode;
@@ -100,6 +102,66 @@ namespace XTI_Core
                 result = End.CompareTo(other?.End ?? DateTimeOffset.MaxValue);
             }
             return result;
+        }
+
+        public sealed class Builder1
+        {
+            private readonly DateTimeOffset start;
+
+            internal Builder1(DateTimeOffset start)
+            {
+                this.start = start;
+            }
+
+            public DateTimeRange Until(DateTimeOffset end) => DateTimeRange.Between(start, end);
+
+            public Builder2 For(double quantity) => new Builder2(start, quantity);
+
+            public DateTimeRange ForOneMillisecond() => new Builder2(start, 1).Milliseconds();
+
+            public DateTimeRange ForOneSecond() => new Builder2(start, 1).Seconds();
+
+            public DateTimeRange ForOneMinute() => new Builder2(start, 1).Minutes();
+
+            public DateTimeRange ForOneHour() => new Builder2(start, 1).Hours();
+
+            public DateTimeRange ForOneDay() => new Builder2(start, 1).Days();
+
+            public DateTimeRange ForOneWeek() => new Builder2(start, 1).Weeks();
+        }
+
+        public sealed class Builder2
+        {
+            private readonly DateTimeOffset start;
+            private readonly double quantity;
+
+            public Builder2(DateTimeOffset start, double quantity)
+            {
+                this.start = start;
+                this.quantity = quantity;
+            }
+
+            public DateTimeRange Milliseconds()
+                => ToDateTimeRange(TimeSpan.FromMilliseconds(quantity));
+
+            public DateTimeRange Seconds()
+                => ToDateTimeRange(TimeSpan.FromSeconds(quantity));
+
+            public DateTimeRange Minutes()
+                => ToDateTimeRange(TimeSpan.FromMinutes(quantity));
+
+            public DateTimeRange Hours()
+                => ToDateTimeRange(TimeSpan.FromHours(quantity));
+
+            public DateTimeRange Days()
+                => ToDateTimeRange(TimeSpan.FromDays(quantity));
+
+            public DateTimeRange Weeks()
+                => ToDateTimeRange(TimeSpan.FromDays(quantity * 7));
+
+            private DateTimeRange ToDateTimeRange(TimeSpan ts)
+                => Between(start, start.Add(ts));
+
         }
     }
 }
