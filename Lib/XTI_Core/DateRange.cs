@@ -1,48 +1,75 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace XTI_Core
 {
-    public sealed class DateRange : IEquatable<DateRange>, IEquatable<TimeRange>
+    public sealed class DateRange : IEquatable<DateRange>, IEquatable<DateTimeRange>, IComparable<DateRange>
     {
-        public static DateRange OnOrAfter(DateTimeOffset start)
-        {
-            return Between(start, DateTimeOffset.MaxValue);
-        }
+        public static DateRange OnOrAfter(DateTimeOffset start) => OnOrAfter(start.Date);
 
-        public static DateRange OnOrBefore(DateTimeOffset end)
-        {
-            return Between(DateTimeOffset.MinValue, end);
-        }
+        public static DateRange OnOrAfter(DateTime start) => Between(start, DateTime.MaxValue);
 
-        public static DateRange On(DateTimeOffset date)
-        {
-            return Between(date, date);
-        }
+        public static DateRange OnOrBefore(DateTimeOffset end) => OnOrBefore(end.Date);
+
+        public static DateRange OnOrBefore(DateTime end) => Between(DateTime.MinValue, end);
+
+        public static DateRange On(DateTimeOffset date) => On(date.Date);
+
+        public static DateRange On(DateTime date) => Between(date, date);
 
         public static DateRange Between(DateTimeOffset start, DateTimeOffset end)
+            => Between(start.Date, end.Date);
+
+        public static DateRange Between(DateTime startDate, DateTime endDate)
         {
-            if (start > DateTimeOffset.MinValue)
+            if (startDate > DateTime.MinValue)
             {
-                start = start.Date;
+                startDate = startDate.Date;
             }
-            if (end < DateTimeOffset.MaxValue)
+            if (endDate < DateTime.MaxValue)
             {
-                end = end.Date.AddDays(1).AddTicks(-1);
+                endDate = endDate.Date.AddDays(1).AddTicks(-1);
             }
-            return new DateRange(TimeRange.Between(start, end));
+            return new DateRange(DateTimeRange.Between(startDate, endDate));
         }
 
 
-        private DateRange(TimeRange timeRange)
+        private DateRange(DateTimeRange timeRange)
         {
             TimeRange = timeRange;
+            Start = timeRange.Start.Date;
+            End = timeRange.End.Date;
         }
 
-        public TimeRange TimeRange { get; }
-        public DateTimeOffset Start { get => TimeRange.Start; }
-        public DateTimeOffset End { get => TimeRange.End; }
+        public DateTimeRange TimeRange { get; }
+        public DateTime Start { get; }
+        public DateTime End { get; }
 
-        public bool IsInRange(DateTimeOffset value) => TimeRange.IsInRange(value);
+        public DateTime[] Dates()
+        {
+            if (TimeRange.Start == DateTimeOffset.MinValue)
+            {
+                throw new ArgumentException("Unable to get dates when start is MinValue");
+            }
+            if (TimeRange.End == DateTimeOffset.MaxValue)
+            {
+                throw new ArgumentException("Unable to get dates when end is MaxValue");
+            }
+            var dates = new List<DateTime>();
+            var startDate = TimeRange.Start.Date;
+            var endDate = TimeRange.End.Date;
+            var date = startDate;
+            while (date <= endDate)
+            {
+                dates.Add(date);
+                date = date.AddDays(1);
+            }
+            return dates.ToArray();
+        }
+
+        public bool IsInRange(DateTimeOffset value) => IsInRange(value.Date);
+
+        public bool IsInRange(DateTime value) => TimeRange.IsInRange(value);
 
         public bool HasLowerBound() => TimeRange.HasLowerBound();
 
@@ -55,20 +82,20 @@ namespace XTI_Core
             {
                 if (Start.Date == End.Date)
                 {
-                    rangeText = $"On {Start.LocalDateTime:M/dd/yy}";
+                    rangeText = $"On {Start:M/dd/yy}";
                 }
                 else
                 {
-                    rangeText = $"From {Start.LocalDateTime:M/dd/yy} to {End.LocalDateTime:M/dd/yy}";
+                    rangeText = $"From {Start:M/dd/yy} to {End:M/dd/yy}";
                 }
             }
             else if (HasLowerBound())
             {
-                rangeText = $"On or After {Start.LocalDateTime:M/dd/yy}";
+                rangeText = $"On or After {Start:M/dd/yy}";
             }
             else if (HasUpperBound())
             {
-                rangeText = $"On or Before {End.LocalDateTime:M/dd/yy}";
+                rangeText = $"On or Before {End:M/dd/yy}";
             }
             else
             {
@@ -81,7 +108,7 @@ namespace XTI_Core
 
         public override bool Equals(object obj)
         {
-            if (obj is TimeRange tr)
+            if (obj is DateTimeRange tr)
             {
                 return Equals(tr);
             }
@@ -94,8 +121,18 @@ namespace XTI_Core
 
         public bool Equals(DateRange other) => TimeRange.Equals(other?.TimeRange);
 
-        public bool Equals(TimeRange other) => TimeRange.Equals(other);
+        public bool Equals(DateTimeRange other) => TimeRange.Equals(other);
 
         public override int GetHashCode() => TimeRange.GetHashCode();
+
+        public int CompareTo(DateRange other)
+        {
+            int result = Start.CompareTo(other?.Start ?? DateTimeOffset.MaxValue);
+            if (result != 0)
+            {
+                result = End.CompareTo(other?.End ?? DateTimeOffset.MaxValue);
+            }
+            return result;
+        }
     }
 }

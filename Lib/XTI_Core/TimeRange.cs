@@ -1,89 +1,96 @@
 ﻿using System;
+using System.Text.Json;
 
 namespace XTI_Core
 {
-    public sealed class TimeRange : IEquatable<TimeRange>, IEquatable<DateRange>
+    public struct TimeRange
     {
-        public static TimeRange OnOrAfter(DateTimeOffset start)
+        public static TimeRange Deserialize(string str)
         {
-            return Between(start, DateTimeOffset.MaxValue);
+            var options = new JsonSerializerOptions();
+            options.Converters.Add(new TimeRangeJsonConverter());
+            return JsonSerializer.Deserialize<TimeRange>(str, options);
         }
 
-        public static TimeRange OnOrBefore(DateTimeOffset end)
+        public static Builder1 From(string time) => From(Time.Parse(time));
+
+        public static Builder1 From(int hour, int minute = 0, int second = 0, int millisecond = 0) => From(new Time(hour, minute, second, millisecond));
+
+        public static Builder1 From(Time time) => new Builder1(time);
+
+        public static TimeRange AllDay() => From(new Time()).For(24).Hours();
+
+        public TimeRange(Time startTime, TimeSpan duration)
         {
-            return Between(DateTimeOffset.MinValue, end);
+            Start = startTime;
+            Duration = duration;
         }
 
-        public static TimeRange Between(DateTimeOffset start, DateTimeOffset endTime)
+        public Time Start { get; }
+        public TimeSpan Duration { get; }
+
+        public DateTimeOffset StartTime(DateTimeOffset date) => date.ToLocalTime().Date.Add(Start.ToTimeSpan());
+
+        public DateTimeOffset EndTime(DateTimeOffset date) => StartTime(date).Add(Duration);
+
+        public DateTimeRange Range(DateTimeOffset date)
+            => DateTimeRange.Between(StartTime(date), EndTime(date));
+
+        public bool IsInTimeRange(DateTimeOffset value)
+            => DateTimeRange.Between(StartTime(value), EndTime(value)).IsInRange(value);
+
+        public string Serialize()
         {
-            return new TimeRange(start, endTime);
+            var options = new JsonSerializerOptions();
+            options.Converters.Add(new TimeRangeJsonConverter());
+            return JsonSerializer.Serialize(this, options);
         }
 
-        public TimeRange(DateTimeOffset start, DateTimeOffset end)
+        public override string ToString() => $"TimeRange({Start} for {Duration})";
+
+        public sealed class Builder1
         {
-            Start = start;
-            End = end;
-            value = $"{Start}|{End}";
-            hashCode = value.GetHashCode();
-        }
+            private readonly Time time;
 
-        private readonly string value;
-        private readonly int hashCode;
-
-        public DateTimeOffset Start { get; }
-        public DateTimeOffset End { get; }
-
-        public bool IsInRange(DateTimeOffset value)
-        {
-            return value >= Start && value <= End;
-        }
-
-        public bool HasLowerBound() => Start > DateTimeOffset.MinValue;
-
-        public bool HasUpperBound() => End < DateTimeOffset.MaxValue;
-
-        public override string ToString() => $"{nameof(TimeRange)} {Format()}";
-
-        public string Format()
-        {
-            string rangeText;
-            if (HasLowerBound() && HasUpperBound())
+            public Builder1(Time time)
             {
-                rangeText = $"{Start.LocalDateTime:M/dd/yy h:mm tt} to {End.LocalDateTime:M/dd/yy h:mm tt}";
+                this.time = time;
             }
-            else if (HasLowerBound())
-            {
-                rangeText = $"On or After {Start.LocalDateTime:M/dd/yy h:mm tt}";
-            }
-            else if (HasUpperBound())
-            {
-                rangeText = $"On or Before {End.LocalDateTime:M/dd/yy h:mm tt}";
-            }
-            else
-            {
-                rangeText = "";
-            }
-            return rangeText;
+
+            public Builder2 For(double quantity) => new Builder2(time, quantity);
+
+            public TimeRange ForOneMillisecond() => new Builder2(time, 1).Milliseconds();
+
+            public TimeRange ForOneSecond() => new Builder2(time, 1).Seconds();
+
+            public TimeRange ForOneMinute() => new Builder2(time, 1).Minutes();
+
+            public TimeRange ForOneHour() => new Builder2(time, 1).Hours();
         }
 
-        public override bool Equals(object obj)
+        public sealed class Builder2
         {
-            if (obj is TimeRange tr)
+            private readonly Time time;
+            private readonly double quantity;
+
+            public Builder2(Time time, double quantity)
             {
-                return Equals(tr);
+                this.time = time;
+                this.quantity = quantity;
             }
-            if (obj is DateRange dr)
-            {
-                return Equals(dr);
-            }
-            return base.Equals(obj);
+
+            public TimeRange Milliseconds()
+                => new TimeRange(time, TimeSpan.FromMilliseconds(quantity));
+
+            public TimeRange Seconds()
+                => new TimeRange(time, TimeSpan.FromSeconds(quantity));
+
+            public TimeRange Minutes()
+                => new TimeRange(time, TimeSpan.FromMinutes(quantity));
+
+            public TimeRange Hours()
+                => new TimeRange(time, TimeSpan.FromHours(quantity));
+
         }
-
-        public bool Equals(TimeRange other) => value == other?.value;
-
-        public bool Equals(DateRange other) => other?.Equals(this) == true;
-
-        public override int GetHashCode() => hashCode;
-
     }
 }

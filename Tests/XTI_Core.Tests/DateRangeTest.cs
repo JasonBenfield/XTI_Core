@@ -53,5 +53,26 @@ namespace XTI_Core.Tests
             Assert.That(dateRange.IsInRange(exact.Date.AddDays(1)), Is.False);
             Assert.That(dateRange.IsInRange(exact.Date.AddDays(1).AddMilliseconds(-1)), Is.True);
         }
+
+        [Test]
+        public void ShouldGetDatesInRange()
+        {
+            var dateRange = DateRange.Between(new DateTimeOffset(new DateTime(2021, 9, 29)), new DateTimeOffset(new DateTime(2021, 10, 2)));
+            var dates = dateRange.Dates();
+            Assert.That
+            (
+                dates,
+                Is.EqualTo
+                (
+                    new[]
+                    {
+                        new DateTime(2021, 9, 29),
+                        new DateTime(2021, 9, 30),
+                        new DateTime(2021, 10, 1),
+                        new DateTime(2021, 10, 2)
+                    }
+                )
+            );
+        }
     }
 }
