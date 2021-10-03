@@ -1,8 +1,13 @@
-﻿namespace XTI_Schedule
+﻿using System;
+using XTI_Core;
+
+namespace XTI_Schedule
 {
     public sealed class TimeRangeOptions
     {
-        public int StartTime { get; set; }
-        public int EndTime { get; set; }
+        public Time Start { get; set; }
+        public TimeSpan Duration { get; set; }
+
+        public TimeRange ToTimeRange() => new TimeRange(Start, Duration);
     }
 }
