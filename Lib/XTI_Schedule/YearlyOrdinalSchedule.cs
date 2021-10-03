@@ -6,15 +6,15 @@ namespace XTI_Schedule
 {
     public sealed class YearlyOrdinalSchedule : IDaySchedule
     {
-        private readonly YearlyOrdinalDayOfWeek[] days;
-
         public YearlyOrdinalSchedule(params YearlyOrdinalDayOfWeek[] days)
         {
-            this.days = days;
+            Days = days;
         }
 
+        internal YearlyOrdinalDayOfWeek[] Days { get; }
+
         public bool IsInRange(DateTimeOffset value)
-            => days
+            => Days
                 .SelectMany(d => d.ToDates(value.Date))
                 .Any(d => d == value.Date);
 

@@ -10,7 +10,7 @@ namespace XTI_Schedule
 
         public MonthlyOrdinalScheduleOptions[] MonthlyOrdinalSchedules { get; set; } = new MonthlyOrdinalScheduleOptions[] { };
 
-        public YearlyTimeRangeOptions[] YearlySchedules { get; set; } = new YearlyTimeRangeOptions[] { };
+        public YearlyScheduleOptions[] YearlySchedules { get; set; } = new YearlyScheduleOptions[] { };
 
         public YearlyOrdinalScheduleOptions[] YearlyOrdinalSchedules { get; set; } = new YearlyOrdinalScheduleOptions[] { };
 
@@ -25,27 +25,27 @@ namespace XTI_Schedule
             .Union
             (
                 (MonthlySchedules ?? new MonthlyScheduleOptions[] { })
-                    .Select(tr => tr.ToScheduleTimeRange())
+                    .Select(tr => tr.ToSchedule())
             )
             .Union
             (
                 (MonthlyOrdinalSchedules ?? new MonthlyOrdinalScheduleOptions[] { })
-                    .Select(tr => tr.ToScheduleTimeRange())
+                    .Select(tr => tr.ToSchedule())
             )
             .Union
             (
-                (YearlySchedules ?? new YearlyTimeRangeOptions[] { })
-                    .Select(tr => tr.ToScheduleTimeRange())
+                (YearlySchedules ?? new YearlyScheduleOptions[] { })
+                    .Select(tr => tr.ToSchedule())
             )
             .Union
             (
                 (YearlyOrdinalSchedules ?? new YearlyOrdinalScheduleOptions[] { })
-                    .Select(tr => tr.ToScheduleTimeRange())
+                    .Select(tr => tr.ToSchedule())
             )
             .Union
             (
                 (PeriodicSchedules ?? new PeriodicScheduleOptions[] { })
-                    .Select(tr => tr.ToScheduleTimeRange())
+                    .Select(tr => tr.ToSchedule())
             )
             .ToArray();
     }
