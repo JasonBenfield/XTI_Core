@@ -6,8 +6,6 @@ namespace XTI_Schedule
 {
     public sealed class WeeklySchedule : IDaySchedule
     {
-        private readonly DayOfWeek[] daysOfWeek;
-
         public static WeeklySchedule EveryDay()
             => new WeeklySchedule
             (
@@ -39,13 +37,15 @@ namespace XTI_Schedule
 
         public WeeklySchedule(params DayOfWeek[] daysOfWeek)
         {
-            this.daysOfWeek = daysOfWeek;
+            this.Days = daysOfWeek;
         }
+
+        internal DayOfWeek[] Days { get; }
 
         public bool IsInRange(DateTimeOffset value)
         {
             value = value.ToLocalTime();
-            return daysOfWeek.Any(d => value.DayOfWeek == d);
+            return Days.Any(d => value.DayOfWeek == d);
         }
 
         public DateTime[] AllowedDates(DateRange range)

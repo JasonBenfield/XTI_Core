@@ -7,7 +7,7 @@ namespace XTI_Schedule
         public MonthlyOrdinalDayOfWeekOptions[] Days { get; set; } = new MonthlyOrdinalDayOfWeekOptions[] { };
         public TimeRangeOptions[] TimeRanges { get; set; } = new TimeRangeOptions[] { };
 
-        public Schedule ToScheduleTimeRange()
+        public Schedule ToSchedule()
             => new Schedule
             (
                 new MonthlyOrdinalSchedule

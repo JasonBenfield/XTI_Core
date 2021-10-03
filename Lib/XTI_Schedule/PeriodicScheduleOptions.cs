@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace XTI_Schedule
 {
@@ -13,7 +10,7 @@ namespace XTI_Schedule
         public DateTime StartDate { get; set; }
         public TimeRangeOptions[] TimeRanges { get; set; } = new TimeRangeOptions[] { };
 
-        public Schedule ToScheduleTimeRange()
+        public Schedule ToSchedule()
             => new Schedule
             (
                 new PeriodicSchedule(Frequency, Interval, StartDate),

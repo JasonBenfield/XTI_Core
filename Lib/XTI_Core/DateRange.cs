@@ -33,6 +33,9 @@ namespace XTI_Core
             return new DateRange(DateTimeRange.Between(startDate, endDate));
         }
 
+        public static Builder1 From(DateTimeOffset start) => From(start.LocalDateTime.Date);
+
+        public static Builder1 From(DateTime start) => new Builder1(start);
 
         private DateRange(DateTimeRange timeRange)
         {
@@ -133,6 +136,66 @@ namespace XTI_Core
                 result = End.CompareTo(other?.End ?? DateTimeOffset.MaxValue);
             }
             return result;
+        }
+
+        public sealed class Builder1
+        {
+            private readonly DateTime start;
+
+            internal Builder1(DateTime start)
+            {
+                this.start = start;
+            }
+
+            public DateRange Until(DateTimeOffset end) => Between(start, end);
+
+            public Builder2 For(double quantity) => new Builder2(start, quantity);
+
+            public DateRange ForOneMillisecond() => new Builder2(start, 1).Milliseconds();
+
+            public DateRange ForOneSecond() => new Builder2(start, 1).Seconds();
+
+            public DateRange ForOneMinute() => new Builder2(start, 1).Minutes();
+
+            public DateRange ForOneHour() => new Builder2(start, 1).Hours();
+
+            public DateRange ForOneDay() => new Builder2(start, 1).Days();
+
+            public DateRange ForOneWeek() => new Builder2(start, 1).Weeks();
+        }
+
+        public sealed class Builder2
+        {
+            private readonly DateTime start;
+            private readonly double quantity;
+
+            public Builder2(DateTime start, double quantity)
+            {
+                this.start = start;
+                this.quantity = quantity;
+            }
+
+            public DateRange Milliseconds()
+                => ToDateRange(TimeSpan.FromMilliseconds(quantity));
+
+            public DateRange Seconds()
+                => ToDateRange(TimeSpan.FromSeconds(quantity));
+
+            public DateRange Minutes()
+                => ToDateRange(TimeSpan.FromMinutes(quantity));
+
+            public DateRange Hours()
+                => ToDateRange(TimeSpan.FromHours(quantity));
+
+            public DateRange Days()
+                => ToDateRange(TimeSpan.FromDays(quantity));
+
+            public DateRange Weeks()
+                => ToDateRange(TimeSpan.FromDays(quantity * 7));
+
+            private DateRange ToDateRange(TimeSpan ts)
+                => Between(start, start.Add(ts));
+
         }
     }
 }

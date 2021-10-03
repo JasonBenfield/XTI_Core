@@ -7,7 +7,7 @@ namespace XTI_Schedule
         public MonthDay[] Days { get; set; } = new MonthDay[] { };
         public TimeRangeOptions[] TimeRanges { get; set; } = new TimeRangeOptions[] { };
 
-        public Schedule ToScheduleTimeRange()
+        public Schedule ToSchedule()
             => new Schedule
             (
                 new MonthlySchedule(Days),

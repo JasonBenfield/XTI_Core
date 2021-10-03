@@ -20,6 +20,20 @@ namespace XTI_Core.Tests
         }
 
         [Test]
+        public void ShouldBeInRange_WhenValueIsFromStartForDuration()
+        {
+            var value = DateTimeOffset.Now;
+            var start = value.AddDays(-1);
+            var end = value.AddDays(1);
+            var dateRange = DateRange.From(start).For(2).Days();
+            Assert.That(dateRange.IsInRange(start), Is.True);
+            Assert.That(dateRange.IsInRange(start.AddDays(-1)), Is.False);
+            Assert.That(dateRange.IsInRange(value), Is.True);
+            Assert.That(dateRange.IsInRange(end), Is.True);
+            Assert.That(dateRange.IsInRange(end.AddDays(1)), Is.False);
+        }
+
+        [Test]
         public void ShouldBeInRange_WhenValueIsOnOrAfterTheStartDate()
         {
             var value = DateTimeOffset.Now;
@@ -57,7 +71,7 @@ namespace XTI_Core.Tests
         [Test]
         public void ShouldGetDatesInRange()
         {
-            var dateRange = DateRange.Between(new DateTimeOffset(new DateTime(2021, 9, 29)), new DateTimeOffset(new DateTime(2021, 10, 2)));
+            var dateRange = DateRange.Between(new DateTime(2021, 9, 29), new DateTime(2021, 10, 2));
             var dates = dateRange.Dates();
             Assert.That
             (
