@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using System;
-using System.Reflection;
+using System.IO;
 using XTI_Core;
 
 namespace XTI_Configuration.Extensions
@@ -22,45 +22,21 @@ namespace XTI_Configuration.Extensions
                     reloadOnChange: true
                 );
             }
-            var assembly = Assembly.GetEntryAssembly();
-            var resourceStream = assembly.GetManifestResourceStream($"{assembly.GetName().Name}.appsettings.json");
-            if (resourceStream != null)
+            var appSettingsPaths = new[]
             {
-                config.AddJsonStream(resourceStream);
-            }
-            resourceStream = assembly.GetManifestResourceStream($"{assembly.GetName().Name}.appsettings.{hostEnv.EnvironmentName}.json");
-            if (resourceStream != null)
+                Path.Combine(AppContext.BaseDirectory, "appsettings.json"),
+                Path.Combine(AppContext.BaseDirectory, $"appsettings.{hostEnv.EnvironmentName}.json")
+            };
+            foreach (var path in appSettingsPaths)
             {
-                config.AddJsonStream(resourceStream);
-            }
-            resourceStream = assembly.GetManifestResourceStream($"{assembly.GetName().Name}.appsettings.private.json");
-            if (resourceStream != null)
-            {
-                config.AddJsonStream(resourceStream);
-            }
-            resourceStream = assembly.GetManifestResourceStream($"{assembly.GetName().Name}.appsettings.{hostEnv.EnvironmentName}.private.json");
-            if (resourceStream != null)
-            {
-                config.AddJsonStream(resourceStream);
-            }
-            config
-                .SetBasePath(hostEnv.ContentRootPath)
-                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                .AddJsonFile
+                config.AddJsonFile
                 (
-                    $"appsettings.{hostEnv.EnvironmentName}.json",
+                    path,
                     optional: true,
                     reloadOnChange: true
-                )
-                .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
-                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                .AddJsonFile
-                (
-                    $"appsettings.{hostEnv.EnvironmentName}.json",
-                    optional: true,
-                    reloadOnChange: true
-                )
-                .AddEnvironmentVariables();
+                );
+            }
+            config.AddEnvironmentVariables();
             if (args != null)
             {
                 config.AddCommandLine(args);
