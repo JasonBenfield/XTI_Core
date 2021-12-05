@@ -1,11 +1,8 @@
-﻿using System;
+﻿namespace XTI_Core;
 
-namespace XTI_Core
+public sealed class UtcClock : IClock
 {
-    public sealed class UtcClock : Clock
-    {
-        public DateTimeOffset Now() => DateTimeOffset.UtcNow;
+    public DateTimeOffset Now() => DateTimeOffset.UtcNow;
 
-        public DateTimeOffset Today() => DateTimeOffset.UtcNow.Date;
-    }
+    public DateTimeOffset Today() => DateTimeOffset.UtcNow.Date;
 }

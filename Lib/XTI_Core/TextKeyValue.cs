@@ -1,44 +1,47 @@
-﻿using System.Linq;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 
-namespace XTI_Core
+namespace XTI_Core;
+
+public class TextKeyValue : TextValue
 {
-    public class TextKeyValue : TextValue
+    private static readonly Regex separatorRegex = new Regex("\\s|_+");
+
+    protected TextKeyValue(string value)
+        : base(normalizeValue(value), "")
     {
-        private static readonly Regex separatorRegex = new Regex("\\s|_+");
+        DisplayText = displayTextFromValue(Value);
+    }
 
-        protected TextKeyValue(string value)
-            : base(normalizeValue(value), "")
+    private static string normalizeValue(string value)
+    {
+        var normalized = value;
+        if (separatorRegex.IsMatch(normalized))
         {
-            DisplayText = displayTextFromValue(Value);
+            normalized = separatorRegex.Replace(normalized.ToLower(), "_");
         }
-
-        private static string normalizeValue(string value)
+        else
         {
-            var normalized = value ?? "";
-            if (separatorRegex.IsMatch(value))
-            {
-                normalized = separatorRegex.Replace(normalized.ToLower(), "_");
-            }
-            else
-            {
-                normalized = string.Join('_', new CamelCasedWord(normalized).Words()).ToLower();
-            }
-            return normalized;
+            normalized = string.Join
+            (
+                '_',
+                new CamelCasedWord(normalized).Words()
+            )
+            .ToLower();
         }
+        return normalized;
+    }
 
-        private static string displayTextFromValue(string value)
-            => string.Join
-                (
-                    ' ',
-                    value
-                        .Split('_')
-                        .Select(word => new CapitalizedWord(word).Value())
-                );
+    private static string displayTextFromValue(string value)
+        => string.Join
+            (
+                ' ',
+                value
+                    .Split('_')
+                    .Select(word => new CapitalizedWord(word).Value())
+            );
 
-        protected override bool _Equals(string other)
-        {
-            return base._Equals(normalizeValue(other));
-        }
+    protected override bool _Equals(string? other)
+    {
+        return base._Equals(normalizeValue(other ?? ""));
     }
 }

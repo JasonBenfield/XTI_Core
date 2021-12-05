@@ -1,14 +1,13 @@
-﻿namespace XTI_DB
+﻿namespace XTI_DB;
+
+public class XtiDbName
 {
-    public class XtiDbName
+    public XtiDbName(string environmentName, string dbName)
     {
-        public XtiDbName(string environmentName, string dbName)
-        {
-            Value = $"XTI_{environmentName}_{dbName}";
-        }
-
-        public string Value { get; }
-
-        public override string ToString() => $"{nameof(XtiDbName)} {Value}";
+        Value = $"XTI_{environmentName}_{dbName}";
     }
+
+    public string Value { get; }
+
+    public override string ToString() => $"{nameof(XtiDbName)} {Value}";
 }
