@@ -1,20 +1,22 @@
-﻿using System;
-using System.Linq;
+﻿namespace XTI_Schedule;
 
-namespace XTI_Schedule
+public sealed class PeriodicScheduleOptions
 {
-    public sealed class PeriodicScheduleOptions
-    {
-        public int Frequency { get; set; }
-        public DateInterval Interval { get; set; }
-        public DateTime StartDate { get; set; }
-        public TimeRangeOptions[] TimeRanges { get; set; } = new TimeRangeOptions[] { };
+    private TimeRangeOptions[] timeRanges = new TimeRangeOptions[0];
 
-        public Schedule ToSchedule()
-            => new Schedule
-            (
-                new PeriodicSchedule(Frequency, Interval, StartDate),
-                (TimeRanges ?? new TimeRangeOptions[] { }).Select(tr => tr.ToTimeRange()).ToArray()
-            );
+    public int Frequency { get; set; }
+    public DateInterval Interval { get; set; }
+    public DateTime StartDate { get; set; }
+    public TimeRangeOptions[] TimeRanges
+    {
+        get => timeRanges;
+        set => timeRanges = value ?? new TimeRangeOptions[0];
     }
+
+    public Schedule ToSchedule()
+        => new Schedule
+        (
+            new PeriodicSchedule(Frequency, Interval, StartDate),
+            (TimeRanges ?? new TimeRangeOptions[] { }).Select(tr => tr.ToTimeRange()).ToArray()
+        );
 }

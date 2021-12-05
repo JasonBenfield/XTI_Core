@@ -1,65 +1,62 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Threading.Tasks;
 
-namespace XTI_Core.EF
+namespace XTI_Core.EF;
+
+public sealed class UnitOfWork
 {
-    public sealed class UnitOfWork
+    private readonly DbContext dbContext;
+    private readonly bool isInMemory;
+
+    public UnitOfWork(DbContext dbContext)
     {
-        private readonly DbContext dbContext;
-        private readonly bool isInMemory;
+        this.dbContext = dbContext;
+        isInMemory = dbContext.Database.ProviderName == "Microsoft.EntityFrameworkCore.InMemory";
+    }
 
-        public UnitOfWork(DbContext dbContext)
+    public async Task BeginTransaction()
+    {
+        if (!isInMemory)
         {
-            this.dbContext = dbContext;
-            isInMemory = dbContext.Database.ProviderName == "Microsoft.EntityFrameworkCore.InMemory";
+            await dbContext.Database.BeginTransactionAsync();
         }
+    }
 
-        public async Task BeginTransaction()
+    public async Task Commit()
+    {
+        if (!isInMemory && dbContext.Database.CurrentTransaction != null)
         {
-            if (!isInMemory)
-            {
-                await dbContext.Database.BeginTransactionAsync();
-            }
+            await dbContext.Database.CurrentTransaction.CommitAsync();
         }
+    }
 
-        public async Task Commit()
+    public async Task Rollback()
+    {
+        if (!isInMemory && dbContext.Database.CurrentTransaction != null)
         {
-            if (!isInMemory)
-            {
-                await dbContext.Database.CurrentTransaction.CommitAsync();
-            }
+            await dbContext.Database.CurrentTransaction.RollbackAsync();
         }
+    }
 
-        public async Task Rollback()
+    public bool IsInProgress() => dbContext.Database.CurrentTransaction != null;
+
+    public async Task Execute(Func<Task> action)
+    {
+        if (IsInProgress())
         {
-            if (!isInMemory)
-            {
-                await dbContext.Database.CurrentTransaction.RollbackAsync();
-            }
+            await action();
         }
-
-        public bool IsInProgress() => dbContext.Database.CurrentTransaction != null;
-
-        public async Task Execute(Func<Task> action)
+        else
         {
-            if (IsInProgress())
+            await BeginTransaction();
+            try
             {
                 await action();
+                await Commit();
             }
-            else
+            catch
             {
-                await BeginTransaction();
-                try
-                {
-                    await action();
-                    await Commit();
-                }
-                catch
-                {
-                    await Rollback();
-                    throw;
-                }
+                await Rollback();
+                throw;
             }
         }
     }

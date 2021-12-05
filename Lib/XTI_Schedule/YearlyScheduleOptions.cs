@@ -1,17 +1,26 @@
-﻿using System.Linq;
+﻿namespace XTI_Schedule;
 
-namespace XTI_Schedule
+public sealed class YearlyScheduleOptions
 {
-    public sealed class YearlyScheduleOptions
-    {
-        public YearDay[] Days { get; set; } = new YearDay[] { };
-        public TimeRangeOptions[] TimeRanges { get; set; } = new TimeRangeOptions[] { };
+    private YearDay[] days = new YearDay[0];
+    private TimeRangeOptions[] timeRanges = new TimeRangeOptions[0];
 
-        public Schedule ToSchedule()
-            => new Schedule
-            (
-                new YearlySchedule(Days),
-                (TimeRanges ?? new TimeRangeOptions[] { }).Select(tr => tr.ToTimeRange()).ToArray()
-            );
+    public YearDay[] Days
+    {
+        get => days;
+        set => days = value ?? new YearDay[0];
     }
+
+    public TimeRangeOptions[] TimeRanges
+    {
+        get => timeRanges;
+        set => timeRanges = value ?? new TimeRangeOptions[0];
+    }
+
+    public Schedule ToSchedule()
+        => new Schedule
+        (
+            new YearlySchedule(Days),
+            (TimeRanges ?? new TimeRangeOptions[] { }).Select(tr => tr.ToTimeRange()).ToArray()
+        );
 }

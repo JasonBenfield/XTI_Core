@@ -1,18 +1,26 @@
-﻿using System;
-using System.Linq;
+﻿namespace XTI_Schedule;
 
-namespace XTI_Schedule
+public sealed class WeeklyScheduleOptions
 {
-    public sealed class WeeklyScheduleOptions
-    {
-        public DayOfWeek[] Days { get; set; } = new DayOfWeek[] { };
-        public TimeRangeOptions[] TimeRanges { get; set; } = new TimeRangeOptions[] { };
+    private DayOfWeek[] days = new DayOfWeek[0];
+    private TimeRangeOptions[] timeRanges = new TimeRangeOptions[0];
 
-        public Schedule ToSchedule()
-            => new Schedule
-            (
-                new WeeklySchedule(Days),
-                (TimeRanges ?? new TimeRangeOptions[] { }).Select(tr => tr.ToTimeRange()).ToArray()
-            );
+    public DayOfWeek[] Days
+    {
+        get => days;
+        set => days = value ?? new DayOfWeek[0];
     }
+
+    public TimeRangeOptions[] TimeRanges
+    {
+        get => timeRanges;
+        set => timeRanges = value ?? new TimeRangeOptions[0];
+    }
+
+    public Schedule ToSchedule()
+        => new Schedule
+        (
+            new WeeklySchedule(Days),
+            (TimeRanges ?? new TimeRangeOptions[] { }).Select(tr => tr.ToTimeRange()).ToArray()
+        );
 }
