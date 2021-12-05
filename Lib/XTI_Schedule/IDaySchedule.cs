@@ -1,11 +1,9 @@
-﻿using System;
-using XTI_Core;
+﻿using XTI_Core;
 
-namespace XTI_Schedule
+namespace XTI_Schedule;
+
+public interface IDaySchedule
 {
-    public interface IDaySchedule
-    {
-        bool IsInRange(DateTimeOffset value);
-        DateTime[] AllowedDates(DateRange range);
-    }
+    bool IsInRange(DateTimeOffset value);
+    DateTime[] AllowedDates(DateRange range);
 }

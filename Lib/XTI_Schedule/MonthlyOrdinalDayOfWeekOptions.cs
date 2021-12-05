@@ -1,12 +1,9 @@
-﻿using System;
+﻿namespace XTI_Schedule;
 
-namespace XTI_Schedule
+public sealed class MonthlyOrdinalDayOfWeekOptions
 {
-    public sealed class MonthlyOrdinalDayOfWeekOptions
-    {
-        public OrdinalWeek Week { get; set; }
-        public DayOfWeek DayOfWeek { get; set; }
+    public OrdinalWeek Week { get; set; }
+    public DayOfWeek DayOfWeek { get; set; }
 
-        public MonthlyOrdinalDayOfWeek ToOrdinalDayOfWeek() => new MonthlyOrdinalDayOfWeek(Week, DayOfWeek);
-    }
+    public MonthlyOrdinalDayOfWeek ToOrdinalDayOfWeek() => new MonthlyOrdinalDayOfWeek(Week, DayOfWeek);
 }

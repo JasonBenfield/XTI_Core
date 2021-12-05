@@ -1,14 +1,19 @@
-﻿using System;
+﻿namespace XTI_Schedule;
 
-namespace XTI_Schedule
+public sealed class YearlyOrdinalDayOfWeekOptions
 {
-    public sealed class YearlyOrdinalDayOfWeekOptions
-    {
-        public OrdinalWeek Week { get; set; }
-        public DayOfWeek DayOfWeek { get; set; }
-        public Months[] Months { get; set; }
+    private Months[] months = new Months[0];
 
-        public YearlyOrdinalDayOfWeek ToOrdinalDayOfWeek()
-            => new YearlyOrdinalDayOfWeek(Week, DayOfWeek, Months);
+    public OrdinalWeek Week { get; set; }
+
+    public DayOfWeek DayOfWeek { get; set; }
+
+    public Months[] Months
+    {
+        get => months;
+        set => months = value ?? new Months[0];
     }
+
+    public YearlyOrdinalDayOfWeek ToOrdinalDayOfWeek() =>
+        new YearlyOrdinalDayOfWeek(Week, DayOfWeek, Months);
 }
