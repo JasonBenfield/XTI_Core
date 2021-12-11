@@ -40,5 +40,7 @@ public class NumericValues<T> where T : NumericValue
             ) ?? DefaultValue;
     }
 
-    public T[] All() => values.ToArray();
+    public T GetDefault() => DefaultValue;
+
+    public T[] GetAll() => values.ToArray();
 }
