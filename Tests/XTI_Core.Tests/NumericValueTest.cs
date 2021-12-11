@@ -23,7 +23,7 @@ public sealed class NumericValueTest
     {
         Assert.That
         (
-            EmployeeType.Values.All(),
+            EmployeeType.Values.GetAll(),
             Is.EquivalentTo(new[] { EmployeeType.Values.None, EmployeeType.Values.Temp, EmployeeType.Values.Permanent }),
             "Should get all values"
         );
