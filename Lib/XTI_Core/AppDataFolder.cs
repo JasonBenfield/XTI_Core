@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.Hosting;
-
-namespace XTI_Core;
+﻿namespace XTI_Core;
 
 public sealed class AppDataFolder
 {
@@ -35,8 +33,8 @@ public sealed class AppDataFolder
     public AppDataFolder WithSubFolder(string name)
         => new AppDataFolder(path, subFolderNames.Union(new[] { name }));
 
-    internal AppDataFolder WithHostEnvironment(IHostEnvironment hostEnv)
-        => WithSubFolder(hostEnv.EnvironmentName);
+    internal AppDataFolder WithHostEnvironment(XtiEnvironment env)
+        => WithSubFolder(env.EnvironmentName);
 
     public void TryCreate()
     {

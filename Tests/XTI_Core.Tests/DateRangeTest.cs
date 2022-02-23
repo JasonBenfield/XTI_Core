@@ -79,10 +79,10 @@ public sealed class DateRangeTest
             (
                 new[]
                 {
-                        new DateTime(2021, 9, 29),
-                        new DateTime(2021, 9, 30),
-                        new DateTime(2021, 10, 1),
-                        new DateTime(2021, 10, 2)
+                    new DateTime(2021, 9, 29),
+                    new DateTime(2021, 9, 30),
+                    new DateTime(2021, 10, 1),
+                    new DateTime(2021, 10, 2)
                 }
             )
         );

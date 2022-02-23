@@ -1,14 +1,12 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Options;
 using NUnit.Framework;
-using XTI_Configuration.Extensions;
+using XTI_Core.Extensions;
 using XTI_Schedule;
 
 namespace XTI_Core.Tests;
 
-public sealed class AggregateScheduleTest
+internal sealed class AggregateScheduleTest
 {
     [Test]
     public void ShouldBeInScheduleByDayOfWeek()
@@ -174,7 +172,7 @@ public sealed class AggregateScheduleTest
                     KeyValuePair.Create("WeeklySchedules:0:TimeRanges:0:Duration", "2:30:00")
             }
         );
-        var options = services.GetRequiredService<IOptions<ScheduleOptions>>().Value;
+        var options = services.GetRequiredService<ScheduleOptions>();
         Assert.That(options.WeeklySchedules.Length, Is.EqualTo(1));
         Assert.That
         (
@@ -193,13 +191,13 @@ public sealed class AggregateScheduleTest
         (
             new[]
             {
-                    KeyValuePair.Create("MonthlySchedules:0:Days:0", "15"),
-                    KeyValuePair.Create("MonthlySchedules:0:Days:1", "Last"),
-                    KeyValuePair.Create("MonthlySchedules:0:TimeRanges:0:Start", "10 AM"),
-                    KeyValuePair.Create("MonthlySchedules:0:TimeRanges:0:Duration", "2:30:00")
+                KeyValuePair.Create("MonthlySchedules:0:Days:0", "15"),
+                KeyValuePair.Create("MonthlySchedules:0:Days:1", "Last"),
+                KeyValuePair.Create("MonthlySchedules:0:TimeRanges:0:Start", "10 AM"),
+                KeyValuePair.Create("MonthlySchedules:0:TimeRanges:0:Duration", "2:30:00")
             }
         );
-        var options = services.GetRequiredService<IOptions<ScheduleOptions>>().Value;
+        var options = services.GetRequiredService<ScheduleOptions>();
         Assert.That
         (
             options.MonthlySchedules[0].Days,
@@ -223,7 +221,7 @@ public sealed class AggregateScheduleTest
                     KeyValuePair.Create("MonthlyOrdinalSchedules:0:TimeRanges:0:Duration", "2:30:00")
             }
         );
-        var options = services.GetRequiredService<IOptions<ScheduleOptions>>().Value;
+        var options = services.GetRequiredService<ScheduleOptions>();
         Assert.That(options.MonthlyOrdinalSchedules.Length, Is.EqualTo(1));
         Assert.That(options.MonthlyOrdinalSchedules[0].Days.Length, Is.EqualTo(1));
         Assert.That(options.MonthlyOrdinalSchedules[0].Days[0].Week, Is.EqualTo(OrdinalWeek.Second));
@@ -247,7 +245,7 @@ public sealed class AggregateScheduleTest
                     KeyValuePair.Create("PeriodicSchedules:0:TimeRanges:0:Duration", "2:30:00")
             }
         );
-        var options = services.GetRequiredService<IOptions<ScheduleOptions>>().Value;
+        var options = services.GetRequiredService<ScheduleOptions>();
         Assert.That(options.PeriodicSchedules.Length, Is.EqualTo(1));
         Assert.That(options.PeriodicSchedules[0].Frequency, Is.EqualTo(2));
         Assert.That(options.PeriodicSchedules[0].Interval, Is.EqualTo(DateInterval.Weeks));
@@ -270,7 +268,7 @@ public sealed class AggregateScheduleTest
                     KeyValuePair.Create("YearlySchedules:0:TimeRanges:0:Duration", "2:30:00")
             }
         );
-        var options = services.GetRequiredService<IOptions<ScheduleOptions>>().Value;
+        var options = services.GetRequiredService<ScheduleOptions>();
         Assert.That(options.YearlySchedules.Length, Is.EqualTo(1));
         Assert.That
         (
@@ -300,7 +298,7 @@ public sealed class AggregateScheduleTest
                     KeyValuePair.Create("YearlyOrdinalSchedules:0:TimeRanges:0:Duration", "2:30:00")
             }
         );
-        var options = services.GetRequiredService<IOptions<ScheduleOptions>>().Value;
+        var options = services.GetRequiredService<ScheduleOptions>();
         Assert.That(options.YearlyOrdinalSchedules.Length, Is.EqualTo(1));
         Assert.That(options.YearlyOrdinalSchedules[0].Days.Length, Is.EqualTo(1));
         Assert.That(options.YearlyOrdinalSchedules[0].Days[0].Week, Is.EqualTo(OrdinalWeek.Second));
@@ -317,25 +315,9 @@ public sealed class AggregateScheduleTest
 
     private IServiceProvider setup(KeyValuePair<string, string>[] settings)
     {
-        var host = Host.CreateDefaultBuilder()
-            .ConfigureAppConfiguration
-            (
-                (hostContext, configuration) =>
-                {
-                    configuration.UseXtiConfiguration(hostContext.HostingEnvironment, new string[] { });
-                    configuration.Sources.Clear();
-                    configuration.AddInMemoryCollection(settings);
-                }
-            )
-            .ConfigureServices
-            (
-                (hostContext, services) =>
-                {
-                    services.Configure<ScheduleOptions>(hostContext.Configuration);
-                }
-            )
-            .Build();
-        var scope = host.Services.CreateScope();
-        return scope.ServiceProvider;
+        var builder = new XtiHostBuilder();
+        builder.Configuration.AddInMemoryCollection(settings);
+        builder.Services.AddConfigurationOptions<ScheduleOptions>();
+        return builder.Build().Scope();
     }
 }

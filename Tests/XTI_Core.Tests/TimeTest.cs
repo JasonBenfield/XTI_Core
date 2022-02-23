@@ -1,10 +1,8 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Options;
 using NUnit.Framework;
 using System.ComponentModel;
-using XTI_Configuration.Extensions;
+using XTI_Core.Extensions;
 
 namespace XTI_Core.Tests;
 
@@ -59,34 +57,18 @@ sealed class TimeTest
     public void ShouldConvertFromOptions()
     {
         var services = setup("5:45PM");
-        var options = services.GetRequiredService<IOptions<TimeObject>>().Value;
+        var options = services.GetRequiredService<TimeObject>();
         Assert.That(options?.Time, Is.EqualTo(new Time(17, 45)));
     }
 
     private IServiceProvider setup(string time)
     {
-        var host = Host.CreateDefaultBuilder()
-            .ConfigureAppConfiguration
-            (
-                (hostContext, configuration) =>
-                {
-                    configuration.UseXtiConfiguration(hostContext.HostingEnvironment, new string[] { });
-                    configuration.Sources.Clear();
-                    configuration.AddInMemoryCollection(new[]
-                    {
-                            KeyValuePair.Create("Time", time)
-                    });
-                }
-            )
-            .ConfigureServices
-            (
-                (hostContext, services) =>
-                {
-                    services.Configure<TimeObject>(hostContext.Configuration);
-                }
-            )
-            .Build();
-        var scope = host.Services.CreateScope();
-        return scope.ServiceProvider;
+        var hostBuilder = new XtiHostBuilder();
+        hostBuilder.Configuration.AddInMemoryCollection
+        (
+            new[] { KeyValuePair.Create("Time", time) }
+        );
+        hostBuilder.Services.AddConfigurationOptions<TimeObject>();
+        return hostBuilder.Build().Scope();
     }
 }

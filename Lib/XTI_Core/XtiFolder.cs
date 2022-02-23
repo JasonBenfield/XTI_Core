@@ -1,15 +1,13 @@
-﻿using Microsoft.Extensions.Hosting;
-
-namespace XTI_Core;
+﻿namespace XTI_Core;
 
 public sealed class XtiFolder
 {
-    private readonly IHostEnvironment hostEnv;
+    private readonly XtiEnvironment env;
     private readonly string path;
 
-    public XtiFolder(IHostEnvironment hostEnv)
+    public XtiFolder(XtiEnvironment env)
     {
-        this.hostEnv = hostEnv;
+        this.env = env;
         path = Environment.GetEnvironmentVariable("XTI_Dir") ?? "c:\\xti";
         if (string.IsNullOrWhiteSpace(path))
         {
@@ -19,27 +17,36 @@ public sealed class XtiFolder
 
     public string FolderPath() => path;
 
-    public string[] SharedSettingsPaths()
+    public string[] SettingsPaths(string appName, string appType)
     {
-        var sharedAppDataFolder = SharedAppDataFolder();
-        return new[]
+        var paths = new List<string>();
+        var sharedFolder = SharedAppDataFolder();
+        paths.Add(sharedFolder.FilePath("appsettings.json"));
+        paths.Add(sharedFolder.FilePath("appsettings.private.json"));
+        var envFolder = AppDataFolder();
+        paths.Add(envFolder.FilePath("appsettings.json"));
+        paths.Add(envFolder.FilePath("appsettings.private.json"));
+        if (!string.IsNullOrWhiteSpace(appName) && !string.IsNullOrWhiteSpace(appType))
         {
-                sharedAppDataFolder.FilePath("appsettings.json"),
-                sharedAppDataFolder.FilePath($"appsettings.{hostEnv.EnvironmentName}.json")
-            };
+            var appFolder = AppDataFolder(appName, appType);
+            paths.Add(appFolder.FilePath("appsettings.json"));
+            paths.Add(appFolder.FilePath("appsettings.private.json"));
+        }
+        paths.Add(Path.Combine(AppContext.BaseDirectory, "appsettings.json"));
+        paths.Add(Path.Combine(AppContext.BaseDirectory, $"appsettings.{env.EnvironmentName}.json"));
+        return paths.ToArray();
     }
 
     public AppDataFolder SharedAppDataFolder()
-        => getAppDataFolder()
-            .WithSubFolder("Shared");
+        => getAppDataFolder();
 
     public AppDataFolder AppDataFolder()
         => getAppDataFolder()
-            .WithHostEnvironment(hostEnv);
+            .WithHostEnvironment(env);
 
     public AppDataFolder AppDataFolder(string appName, string appType)
         => getAppDataFolder()
-            .WithHostEnvironment(hostEnv)
+            .WithHostEnvironment(env)
             .WithSubFolder($"{getAppType(appType)}s")
             .WithSubFolder(getAppName(appName));
 
@@ -57,7 +64,7 @@ public sealed class XtiFolder
         (
             path,
             "Apps",
-            hostEnv.EnvironmentName,
+            env.EnvironmentName,
             $"{getAppType(appType)}s",
             getAppName(appName)
         );
@@ -73,7 +80,7 @@ public sealed class XtiFolder
         (
             path,
             "Published",
-            hostEnv.EnvironmentName,
+            env.EnvironmentName,
             $"{getAppType(appType)}s",
             getAppName(appName),
             versionKey

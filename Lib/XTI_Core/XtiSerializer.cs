@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace XTI_Core;
 
@@ -14,30 +15,25 @@ public static class XtiSerializer
     public static T Deserialize<T>(string str, Func<T> ifnull, JsonSerializerOptions? options = null) =>
         JsonSerializer.Deserialize<T>(str, options ?? DefaultOptions()) ?? ifnull();
 
-    private static JsonSerializerOptions DefaultOptions() => 
+    private static JsonSerializerOptions DefaultOptions() =>
         new JsonSerializerOptions().AddCoreConverters();
 
     public static JsonSerializerOptions AddCoreConverters(this JsonSerializerOptions options)
     {
-        if (!options.Converters.OfType<NullStringAsEmptyJsonConverter>().Any())
+        options.AddConverter<NullStringAsEmptyJsonConverter>();
+        options.AddConverter<NumericValueJsonConverter>();
+        options.AddConverter<TimeJsonConverter>();
+        options.AddConverter<TimeRangeJsonConverter>();
+        options.AddConverter<TimeSpanJsonConverter>();
+        return options;
+    }
+
+    public static JsonSerializerOptions AddConverter<T>(this JsonSerializerOptions options)
+        where T : JsonConverter, new()
+    {
+        if (!options.Converters.OfType<T>().Any())
         {
-            options.Converters.Add(new NullStringAsEmptyJsonConverter());
-        }
-        if (!options.Converters.OfType<NumericValueJsonConverter>().Any())
-        {
-            options.Converters.Add(new NumericValueJsonConverter());
-        }
-        if (!options.Converters.OfType<TimeJsonConverter>().Any())
-        {
-            options.Converters.Add(new TimeJsonConverter());
-        }
-        if (!options.Converters.OfType<TimeRangeJsonConverter>().Any())
-        {
-            options.Converters.Add(new TimeRangeJsonConverter());
-        }
-        if (!options.Converters.OfType<TimeSpanJsonConverter>().Any())
-        {
-            options.Converters.Add(new TimeSpanJsonConverter());
+            options.Converters.Add(new T());
         }
         return options;
     }

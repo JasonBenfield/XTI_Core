@@ -1,6 +1,8 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using NUnit.Framework;
+using XTI_Core.Extensions;
 
 namespace XTI_Core.Tests;
 
@@ -43,7 +45,7 @@ sealed class XtiFolderTest
         Assert.That
         (
             xtiFolder.SharedAppDataFolder().Path(),
-            Is.EqualTo(Path.Combine(XtiDir, "AppData", "Shared")).IgnoreCase
+            Is.EqualTo(Path.Combine(XtiDir, "AppData")).IgnoreCase
         );
     }
 
@@ -112,17 +114,31 @@ sealed class XtiFolderTest
         );
     }
 
+    [Test]
+    public void ShouldReturnSettingsPaths()
+    {
+        const string envName = "Development";
+        var services = setup(envName);
+        var xtiFolder = services.GetRequiredService<XtiFolder>();
+        var settingsPaths = xtiFolder.SettingsPaths("Hub", "WebApp");
+        Console.WriteLine(string.Join("\r\n", settingsPaths));
+    }
+
+    [Test]
+    public void ShouldReturnSettingsPaths_WhenAppNameAndAppTypeAreBlank()
+    {
+        const string envName = "Development";
+        var services = setup(envName);
+        var xtiFolder = services.GetRequiredService<XtiFolder>();
+        var settingsPaths = xtiFolder.SettingsPaths("", "");
+        Console.WriteLine(string.Join("\r\n", settingsPaths));
+    }
+
     private IServiceProvider setup(string envName)
     {
         Environment.SetEnvironmentVariable("XTI_Dir", XtiDir);
         Environment.SetEnvironmentVariable("DOTNET_ENVIRONMENT", envName);
-        var host = Host.CreateDefaultBuilder()
-            .ConfigureServices(services =>
-            {
-                services.AddSingleton<XtiFolder>();
-            })
-            .Build();
-        var scope = host.Services.CreateScope();
-        return scope.ServiceProvider;
+        var builder = new XtiHostBuilder();
+        return builder.Build().Scope();
     }
 }
