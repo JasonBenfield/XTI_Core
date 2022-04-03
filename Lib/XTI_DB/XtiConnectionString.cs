@@ -1,15 +1,8 @@
-﻿using Microsoft.Extensions.Options;
-
-namespace XTI_DB;
+﻿namespace XTI_DB;
 
 public class XtiConnectionString
 {
     private readonly string value;
-
-    public XtiConnectionString(IOptions<DbOptions> options, XtiDbName dbName)
-        : this(options.Value, dbName)
-    {
-    }
 
     public XtiConnectionString(DbOptions options, XtiDbName dbName)
     {

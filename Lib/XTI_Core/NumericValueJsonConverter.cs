@@ -6,6 +6,8 @@ namespace XTI_Core;
 
 public sealed class NumericValueJsonConverter : JsonConverter<NumericValue>
 {
+    public override bool HandleNull => true;
+
     public override bool CanConvert(Type typeToConvert)
         => typeof(NumericValue).IsAssignableFrom(typeToConvert);
 

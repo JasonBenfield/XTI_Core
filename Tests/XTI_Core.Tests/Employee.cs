@@ -1,22 +1,24 @@
-﻿namespace XTI_Core.Tests
+﻿namespace XTI_Core.Tests;
+
+internal sealed class Employee
 {
-    internal sealed class Employee
+    public EmployeeType EmployeeType { get; set; } = EmployeeType.Values.None;
+
+    public string Name { get; set; } = "";
+
+    public decimal HourlyWages { get; set; }
+
+    private Department department = new();
+
+    public Department Department
     {
-        private EmployeeType employeeType = EmployeeType.Values.None;
-        private string name = "";
-
-        public EmployeeType EmployeeType
-        {
-            get => employeeType;
-            set => employeeType = value ?? EmployeeType.Values.None;
-        }
-
-        public string Name
-        {
-            get => name;
-            set => name = value ?? "";
-        }
-
-        public decimal HourlyWages { get; set; }
+        get => department;
+        set => department = value ?? new();
     }
+}
+
+public sealed class Department
+{
+    public int ID { get; set; }
+    public string Name { get; set; } = "";
 }

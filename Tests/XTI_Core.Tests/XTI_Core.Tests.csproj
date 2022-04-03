@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Lib\XTI_Configuration.Extensions\XTI_Configuration.Extensions.csproj" />
+    <ProjectReference Include="..\..\Lib\XTI_Core.Extensions\XTI_Core.Extensions.csproj" />
     <ProjectReference Include="..\..\Lib\XTI_Core.Fakes\XTI_Core.Fakes.csproj" />
     <ProjectReference Include="..\..\Lib\XTI_Core\XTI_Core.csproj" />
     <ProjectReference Include="..\..\Lib\XTI_Schedule\XTI_Schedule.csproj" />

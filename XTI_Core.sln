@@ -1,17 +1,16 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30717.126
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32014.148
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{CE061E26-BD39-4AFA-9D78-46AE929D96FD}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
-		Core.ps1 = Core.ps1
+		Common.Targets = Common.Targets
+		xti.ps1 = xti.ps1
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Lib", "Lib", "{58169265-EA3B-4D82-A72B-63942D7098E8}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XTI_Configuration.Extensions", "Lib\XTI_Configuration.Extensions\XTI_Configuration.Extensions.csproj", "{179EFDCF-D43E-4615-A8E1-1E06A7B96027}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XTI_Core", "Lib\XTI_Core\XTI_Core.csproj", "{43C1FBB1-9D60-47A5-96EC-FDE9C6F7BB20}"
 EndProject
@@ -29,16 +28,16 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XTI_Schedule", "Lib\XTI_Sch
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XTI_DB", "Lib\XTI_DB\XTI_DB.csproj", "{E4505CCD-FCDB-4442-A53F-163D69816321}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XTI_Processes", "Lib\XTI_Processes\XTI_Processes.csproj", "{B3166511-77FF-41F2-B2FC-4CE4929C5EAF}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XTI_Tool", "Lib\XTI_Tool\XTI_Tool.csproj", "{7B17148D-0ABA-461A-9EA6-3BC45F880A06}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{179EFDCF-D43E-4615-A8E1-1E06A7B96027}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{179EFDCF-D43E-4615-A8E1-1E06A7B96027}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{179EFDCF-D43E-4615-A8E1-1E06A7B96027}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{179EFDCF-D43E-4615-A8E1-1E06A7B96027}.Release|Any CPU.Build.0 = Release|Any CPU
 		{43C1FBB1-9D60-47A5-96EC-FDE9C6F7BB20}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{43C1FBB1-9D60-47A5-96EC-FDE9C6F7BB20}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{43C1FBB1-9D60-47A5-96EC-FDE9C6F7BB20}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -67,12 +66,19 @@ Global
 		{E4505CCD-FCDB-4442-A53F-163D69816321}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E4505CCD-FCDB-4442-A53F-163D69816321}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E4505CCD-FCDB-4442-A53F-163D69816321}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B3166511-77FF-41F2-B2FC-4CE4929C5EAF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B3166511-77FF-41F2-B2FC-4CE4929C5EAF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B3166511-77FF-41F2-B2FC-4CE4929C5EAF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B3166511-77FF-41F2-B2FC-4CE4929C5EAF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7B17148D-0ABA-461A-9EA6-3BC45F880A06}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7B17148D-0ABA-461A-9EA6-3BC45F880A06}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7B17148D-0ABA-461A-9EA6-3BC45F880A06}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7B17148D-0ABA-461A-9EA6-3BC45F880A06}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{179EFDCF-D43E-4615-A8E1-1E06A7B96027} = {58169265-EA3B-4D82-A72B-63942D7098E8}
 		{43C1FBB1-9D60-47A5-96EC-FDE9C6F7BB20} = {58169265-EA3B-4D82-A72B-63942D7098E8}
 		{A50950A1-F04D-4BDB-AE56-26D23E9BB394} = {58169265-EA3B-4D82-A72B-63942D7098E8}
 		{4E2EF4F7-4643-4DD3-870D-44C14D04F0F8} = {58169265-EA3B-4D82-A72B-63942D7098E8}
@@ -80,6 +86,8 @@ Global
 		{785441A3-266F-4A6F-A359-69ED6B8A9065} = {B2FA6A7B-1CC6-4A59-8A21-E35881D736B4}
 		{A9E1E139-9A82-4576-8447-B9255EEBC36E} = {58169265-EA3B-4D82-A72B-63942D7098E8}
 		{E4505CCD-FCDB-4442-A53F-163D69816321} = {58169265-EA3B-4D82-A72B-63942D7098E8}
+		{B3166511-77FF-41F2-B2FC-4CE4929C5EAF} = {58169265-EA3B-4D82-A72B-63942D7098E8}
+		{7B17148D-0ABA-461A-9EA6-3BC45F880A06} = {58169265-EA3B-4D82-A72B-63942D7098E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0EA644F7-574D-4CED-AEC1-46C0D2493BC0}

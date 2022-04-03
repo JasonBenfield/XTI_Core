@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using NUnit.Framework;
+using XTI_Core.Extensions;
 
 namespace XTI_Core.Tests;
 
@@ -64,15 +64,9 @@ public sealed class AppDataFolderTest
 
     private IServiceProvider setup(string envName)
     {
-        Environment.SetEnvironmentVariable("DOTNET_ENVIRONMENT", envName);
-        var host = Host.CreateDefaultBuilder()
-            .ConfigureServices(services =>
-            {
-                services.AddSingleton<XtiFolder>();
-                services.AddSingleton(sp => sp.GetRequiredService<XtiFolder>().AppDataFolder());
-            })
-            .Build();
-        var scope = host.Services.CreateScope();
-        return scope.ServiceProvider;
+        var hostBuilder = new XtiHostBuilder(XtiEnvironment.Parse(envName));
+        hostBuilder.Services.AddSingleton(sp => sp.GetRequiredService<XtiFolder>().AppDataFolder());
+        var host = hostBuilder.Build();
+        return host.Scope();
     }
 }
