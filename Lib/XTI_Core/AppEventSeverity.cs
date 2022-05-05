@@ -1,8 +1,10 @@
 ﻿using System.ComponentModel;
+using System.Text.Json.Serialization;
 
 namespace XTI_Core;
 
 [TypeConverter(typeof(NumericValueTypeConverter<AppEventSeverity>))]
+[JsonConverter(typeof(NumericValueJsonConverter<AppEventSeverity>))]
 public sealed class AppEventSeverity : NumericValue, IEquatable<AppEventSeverity>
 {
     public sealed class AppEventSeverities : NumericValues<AppEventSeverity>

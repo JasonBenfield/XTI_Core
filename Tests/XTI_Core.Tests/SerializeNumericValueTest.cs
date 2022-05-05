@@ -1,5 +1,6 @@
 ﻿using NUnit.Framework;
 using System.ComponentModel;
+using System.Text.Json;
 
 namespace XTI_Core.Tests;
 
@@ -65,4 +66,19 @@ public sealed class SerializeNumericValueTest
         var converted = TypeDescriptor.GetConverter(typeof(AppEventSeverity)).ConvertFrom("Critical Error");
         Assert.That(converted, Is.EqualTo(original));
     }
+
+    [Test]
+    public void ShouldConvertAppEventSeverityFromJson()
+    {
+        var original = new EventLogItem(AppEventSeverity.Values.CriticalError);
+        var serialized = JsonSerializer.Serialize(original);
+        var deserialized = JsonSerializer.Deserialize<EventLogItem>(serialized);
+        Assert.That(deserialized, Is.EqualTo(original));
+        deserialized = JsonSerializer.Deserialize<EventLogItem>("{ \"Severity\": \"Critical Error\" }");
+        Assert.That(deserialized, Is.EqualTo(original));
+        deserialized = JsonSerializer.Deserialize<EventLogItem>("{ \"Severity\": 100 }");
+        Assert.That(deserialized, Is.EqualTo(original));
+    }
+
+    private sealed record EventLogItem(AppEventSeverity Severity);
 }

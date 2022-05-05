@@ -22,8 +22,6 @@ public sealed class MonthDayJsonConverter : JsonConverter<MonthDay>
         throw new NotSupportedException($"Unexpected JSON token '{reader.TokenType}'");
     }
 
-    public override void Write(Utf8JsonWriter writer, MonthDay value, JsonSerializerOptions options)
-    {
-        JsonSerializer.Serialize(writer, value.Format());
-    }
+    public override void Write(Utf8JsonWriter writer, MonthDay value, JsonSerializerOptions options) =>
+        writer.WriteStringValue(value.Format());
 }

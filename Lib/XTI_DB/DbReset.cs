@@ -2,7 +2,7 @@
 
 namespace XTI_DB;
 
-public sealed class DbReset
+internal sealed class DbReset
 {
     private readonly DbContext db;
 

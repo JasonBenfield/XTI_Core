@@ -2,7 +2,7 @@
 
 namespace XTI_DB;
 
-public sealed class DbBackup
+internal sealed class DbBackup
 {
     private readonly DbContext dbContext;
 

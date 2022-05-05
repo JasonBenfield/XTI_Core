@@ -1,8 +1,10 @@
 ﻿using System.ComponentModel;
+using System.Text.Json.Serialization;
 
 namespace XTI_Core;
 
 [TypeConverter(typeof(TimeTypeConverter))]
+[JsonConverter(typeof(TimeJsonConverter))]
 public struct Time
 {
     private readonly DateTime date;

@@ -18,8 +18,6 @@ public sealed class YearDayJsonConverter : JsonConverter<YearDay>
         throw new NotSupportedException($"Unexpected JSON token '{reader.TokenType}'");
     }
 
-    public override void Write(Utf8JsonWriter writer, YearDay value, JsonSerializerOptions options)
-    {
-        JsonSerializer.Serialize(writer, value.Format());
-    }
+    public override void Write(Utf8JsonWriter writer, YearDay value, JsonSerializerOptions options) =>
+        writer.WriteStringValue(value.Format());
 }

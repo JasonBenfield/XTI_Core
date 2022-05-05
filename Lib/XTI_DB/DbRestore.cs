@@ -3,7 +3,7 @@ using System.Data;
 
 namespace XTI_DB;
 
-public sealed class DbRestore
+internal sealed class DbRestore
 {
     private readonly DbContext dbContext;
 

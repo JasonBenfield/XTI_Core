@@ -1,9 +1,11 @@
 ﻿using System.ComponentModel;
+using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 
 namespace XTI_Schedule;
 
 [TypeConverter(typeof(MonthDayTypeConverter))]
+[JsonConverter(typeof(MonthDayJsonConverter))]
 public struct MonthDay
 {
     public static readonly MonthDay LastDay = new MonthDay(int.MaxValue);
