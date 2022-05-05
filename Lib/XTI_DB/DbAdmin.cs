@@ -5,17 +5,15 @@ namespace XTI_DB;
 public sealed class DbAdmin
 {
     private readonly DbContext db;
-    private readonly XtiDbName dbName;
 
-    public DbAdmin(DbContext db, XtiDbName dbName)
+    public DbAdmin(DbContext db)
     {
         this.db = db;
-        this.dbName = dbName;
     }
 
-    public Task Backup(string backupFilePath) => new DbBackup(db).Run(dbName, backupFilePath);
+    public Task BackupTo(string backupFilePath) => new DbBackup(db).Run(backupFilePath);
 
-    public Task Restore(string backupFilePath) => new DbBackup(db).Run(dbName, backupFilePath);
+    public Task RestoreFrom(string backupFilePath) => new DbBackup(db).Run(backupFilePath);
 
     public Task Reset() => new DbReset(db).Run();
 }

@@ -12,8 +12,9 @@ internal sealed class DbRestore
         this.dbContext = dbContext;
     }
 
-    public async Task Run(XtiDbName dbName, string backupFilePath)
+    public async Task Run(string backupFilePath)
     {
+        var dbName = dbContext.Database.GetDbConnection().Database;
         backupFilePath = backupFilePath.Replace("'", "''");
         var currentFiles = await retrieveCurrentFiles();
         var currentDataFile = currentFiles.First(f => !f.IsLog);
@@ -23,15 +24,15 @@ internal sealed class DbRestore
         var backupLogFile = backupFiles.First(f => f.IsLog);
         await dbContext.Database.ExecuteSqlRawAsync
         (
-            $"USE [master]\r\nalter database {dbName.Value} set single_user with rollback immediate"
+            $"USE [master]\r\nalter database {dbName} set single_user with rollback immediate"
         );
         await dbContext.Database.ExecuteSqlRawAsync
         (
-            $"USE [master]\r\nRESTORE DATABASE {dbName.Value} FROM DISK = '{backupFilePath}' WITH MOVE '{backupDataFile.LogicalName}' TO '{currentDataFile.PhysicalName}',  MOVE '{backupLogFile.LogicalName}' TO '{currentLogFile.PhysicalName}',  NOUNLOAD, REPLACE"
+            $"USE [master]\r\nRESTORE DATABASE {dbName} FROM DISK = '{backupFilePath}' WITH MOVE '{backupDataFile.LogicalName}' TO '{currentDataFile.PhysicalName}',  MOVE '{backupLogFile.LogicalName}' TO '{currentLogFile.PhysicalName}',  NOUNLOAD, REPLACE"
         );
         await dbContext.Database.ExecuteSqlRawAsync
         (
-            $"USE [master]\r\nalter database {dbName.Value} set multi_user"
+            $"USE [master]\r\nalter database {dbName} set multi_user"
         );
     }
 

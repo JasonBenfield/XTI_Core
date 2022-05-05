@@ -6,8 +6,6 @@
 		<Nullable>enable</Nullable>
 	</PropertyGroup>
 
-	<Import Project="..\\..\\Common.Targets" />
-
 	<ItemGroup>
 		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.0" />
 	</ItemGroup>

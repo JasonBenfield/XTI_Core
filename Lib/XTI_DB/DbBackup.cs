@@ -11,10 +11,11 @@ internal sealed class DbBackup
         this.dbContext = dbContext;
     }
 
-    public Task Run(XtiDbName dbName, string backupFilePath)
+    public Task Run(string backupFilePath)
     {
+        var dbName = dbContext.Database.GetDbConnection().Database;
         FormattableString commandText =
-            $"BACKUP DATABASE {dbName.Value} TO DISK = {backupFilePath}";
+            $"BACKUP DATABASE {dbName} TO DISK = {backupFilePath}";
         return dbContext.Database.ExecuteSqlInterpolatedAsync(commandText);
     }
 }
