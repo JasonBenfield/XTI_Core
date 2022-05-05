@@ -1,7 +1,9 @@
 ﻿using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace XTI_Core;
 
+[JsonConverter(typeof(TimeRangeJsonConverter))]
 public struct TimeRange
 {
     public static TimeRange Deserialize(string str)

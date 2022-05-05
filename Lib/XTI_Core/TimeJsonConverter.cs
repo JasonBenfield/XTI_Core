@@ -20,8 +20,6 @@ public sealed class TimeJsonConverter : JsonConverter<Time>
         throw new NotSupportedException($"Unexpected JSON token '{reader.TokenType}'");
     }
 
-    public override void Write(Utf8JsonWriter writer, Time value, JsonSerializerOptions options)
-    {
-        JsonSerializer.Serialize(writer, value.ToString());
-    }
+    public override void Write(Utf8JsonWriter writer, Time value, JsonSerializerOptions options) =>
+        writer.WriteStringValue(value.ToString());
 }

@@ -1,5 +1,4 @@
-﻿using System.Text.Json;
-using XTI_Core;
+﻿using XTI_Core;
 
 namespace XTI_Schedule;
 
@@ -10,12 +9,7 @@ public sealed class AggregateSchedule
     public static AggregateSchedule Deserialize(string serialized) =>
         new AggregateSchedule
         (
-            XtiSerializer.Deserialize<ScheduleOptions>
-            (
-                serialized,
-                new JsonSerializerOptions().AddScheduleConverters()
-            )
-            .ToSchedules()
+            XtiSerializer.Deserialize<ScheduleOptions>(serialized).ToSchedules()
         );
 
     public AggregateSchedule(params Schedule[] schedules)
@@ -36,12 +30,7 @@ public sealed class AggregateSchedule
             .Distinct()
             .ToArray();
 
-    public string Serialize() =>
-        XtiSerializer.Serialize
-        (
-            ToScheduleOptions(),
-            new JsonSerializerOptions().AddScheduleConverters()
-        );
+    public string Serialize() => XtiSerializer.Serialize(ToScheduleOptions());
 
     public ScheduleOptions ToScheduleOptions()
     {

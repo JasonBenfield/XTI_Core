@@ -1,9 +1,11 @@
 ﻿using System.ComponentModel;
+using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 
 namespace XTI_Schedule;
 
 [TypeConverter(typeof(YearDayTypeConverter))]
+[JsonConverter(typeof(YearDayJsonConverter))]
 public struct YearDay
 {
     private static readonly Regex regex = new Regex("^\\s*(?<Month>\\d{1,2})[\\/-](?<Day>\\d{1,2})\\s*$");

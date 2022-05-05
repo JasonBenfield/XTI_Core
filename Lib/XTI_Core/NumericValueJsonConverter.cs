@@ -1,8 +1,24 @@
-﻿using System.Reflection;
-using System.Text.Json;
+﻿using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace XTI_Core;
+
+public sealed class NumericValueJsonConverter<T> : JsonConverter<T>
+    where T : NumericValue
+{
+    private readonly NumericValueJsonConverter converter;
+
+    public NumericValueJsonConverter()
+    {
+        converter = new NumericValueJsonConverter();
+    }
+
+    public override T? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) =>
+        (T?)converter.Read(ref reader, typeToConvert, options);
+
+    public override void Write(Utf8JsonWriter writer, T value, JsonSerializerOptions options) =>
+        converter.Write(writer, value, options);
+}
 
 public sealed class NumericValueJsonConverter : JsonConverter<NumericValue>
 {
@@ -49,51 +65,12 @@ public sealed class NumericValueJsonConverter : JsonConverter<NumericValue>
 
     private static NumericValue valueFromInt(Type typeToConvert, int value) =>
         (NumericValue)new NumericValueTypeConverter(typeToConvert).ConvertFrom(value)!;
-    //{
-    //    var valuesField = typeToConvert.GetField("Values", BindingFlags.Static | BindingFlags.Public);
-    //    if (valuesField == null)
-    //    {
-    //        throw new ArgumentNullException("Values field not found");
-    //    }
-    //    var values = valuesField.GetValue(typeToConvert);
-    //    var valueMethod = valuesField.FieldType.GetMethod("Value", new[] { typeof(int) });
-    //    if(valueMethod == null)
-    //    {
-    //        throw new ArgumentNullException("Value method not found");
-    //    }
-    //    var numericValue = valueMethod.Invoke(values, new[] { (object)value });
-    //    if (numericValue == null)
-    //    {
-    //        throw new ArgumentNullException("numeric value should not be null");
-    //    }
-    //    return (NumericValue)numericValue;
-    //}
-
-    private static NumericValue valueFromString(Type typeToConvert, string value)
-    {
-        var valuesField = typeToConvert.GetField("Values", BindingFlags.Static | BindingFlags.Public);
-        if (valuesField == null)
-        {
-            throw new ArgumentNullException("Values field not found");
-        }
-        var values = valuesField.GetValue(typeToConvert);
-        var valueMethod = valuesField.FieldType.GetMethod("Value", new[] { typeof(string) });
-        if (valueMethod == null)
-        {
-            throw new ArgumentNullException("Value method not found");
-        }
-        var numericValue = valueMethod.Invoke(values, new[] { value });
-        if (numericValue == null)
-        {
-            throw new ArgumentNullException("numeric value should not be null");
-        }
-        return (NumericValue)numericValue;
-    }
 
     public override void Write(Utf8JsonWriter writer, NumericValue value, JsonSerializerOptions options)
     {
-        var writeOptions = new JsonSerializerOptions(options);
-        writeOptions.Converters.Remove(this);
-        JsonSerializer.Serialize(writer, value, value.GetType(), writeOptions);
+        writer.WriteStartObject();
+        writer.WriteNumber("Value", value.Value);
+        writer.WriteString("DisplayText", value.DisplayText);
+        writer.WriteEndObject();
     }
 }
