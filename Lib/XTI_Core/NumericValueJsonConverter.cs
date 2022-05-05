@@ -8,8 +8,7 @@ public sealed class NumericValueJsonConverter : JsonConverter<NumericValue>
 {
     public override bool HandleNull => true;
 
-    public override bool CanConvert(Type typeToConvert)
-        => typeof(NumericValue).IsAssignableFrom(typeToConvert);
+    public override bool CanConvert(Type typeToConvert) => typeof(NumericValue).IsAssignableFrom(typeToConvert);
 
     public override NumericValue Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
@@ -22,7 +21,7 @@ public sealed class NumericValueJsonConverter : JsonConverter<NumericValue>
         else if (reader.TokenType == JsonTokenType.String)
         {
             var value = reader.GetString() ?? "";
-            numericValue = valueFromString(typeToConvert, value);
+            numericValue = (NumericValue)new NumericValueTypeConverter(typeToConvert).ConvertFrom(value)!;
         }
         else if (reader.TokenType == JsonTokenType.StartObject)
         {
@@ -48,26 +47,27 @@ public sealed class NumericValueJsonConverter : JsonConverter<NumericValue>
         return numericValue;
     }
 
-    private static NumericValue valueFromInt(Type typeToConvert, int value)
-    {
-        var valuesField = typeToConvert.GetField("Values", BindingFlags.Static | BindingFlags.Public);
-        if (valuesField == null)
-        {
-            throw new ArgumentNullException("Values field not found");
-        }
-        var values = valuesField.GetValue(typeToConvert);
-        var valueMethod = valuesField.FieldType.GetMethod("Value", new[] { typeof(int) });
-        if(valueMethod == null)
-        {
-            throw new ArgumentNullException("Value method not found");
-        }
-        var numericValue = valueMethod.Invoke(values, new[] { (object)value });
-        if (numericValue == null)
-        {
-            throw new ArgumentNullException("numeric value should not be null");
-        }
-        return (NumericValue)numericValue;
-    }
+    private static NumericValue valueFromInt(Type typeToConvert, int value) =>
+        (NumericValue)new NumericValueTypeConverter(typeToConvert).ConvertFrom(value)!;
+    //{
+    //    var valuesField = typeToConvert.GetField("Values", BindingFlags.Static | BindingFlags.Public);
+    //    if (valuesField == null)
+    //    {
+    //        throw new ArgumentNullException("Values field not found");
+    //    }
+    //    var values = valuesField.GetValue(typeToConvert);
+    //    var valueMethod = valuesField.FieldType.GetMethod("Value", new[] { typeof(int) });
+    //    if(valueMethod == null)
+    //    {
+    //        throw new ArgumentNullException("Value method not found");
+    //    }
+    //    var numericValue = valueMethod.Invoke(values, new[] { (object)value });
+    //    if (numericValue == null)
+    //    {
+    //        throw new ArgumentNullException("numeric value should not be null");
+    //    }
+    //    return (NumericValue)numericValue;
+    //}
 
     private static NumericValue valueFromString(Type typeToConvert, string value)
     {
@@ -77,13 +77,13 @@ public sealed class NumericValueJsonConverter : JsonConverter<NumericValue>
             throw new ArgumentNullException("Values field not found");
         }
         var values = valuesField.GetValue(typeToConvert);
-        var valueMethod = valuesField.FieldType.GetMethod("Value", new[] { typeof(string) }); 
+        var valueMethod = valuesField.FieldType.GetMethod("Value", new[] { typeof(string) });
         if (valueMethod == null)
         {
             throw new ArgumentNullException("Value method not found");
         }
         var numericValue = valueMethod.Invoke(values, new[] { value });
-        if(numericValue == null)
+        if (numericValue == null)
         {
             throw new ArgumentNullException("numeric value should not be null");
         }

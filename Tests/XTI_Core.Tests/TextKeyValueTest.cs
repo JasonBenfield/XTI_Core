@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+using System.Text.Json;
 
 namespace XTI_Core.Tests;
 
@@ -59,12 +60,68 @@ public sealed class TextKeyValueTest
         Assert.That(key, Is.Not.EqualTo(otherKey));
     }
 
-    public sealed class TestKey : TextKeyValue, IEquatable<TextKeyValue>
+    [Test]
+    [
+        TestCase("one"),
+        TestCase("one_two"),
+        TestCase("Three Four")
+    ]
+    public void ShouldDeserializeTextKeyValue(string keyValue)
+    {
+        var key = new TestKey(keyValue);
+        var jsonOptions = new JsonSerializerOptions();
+        jsonOptions.Converters.Add(new TextValueJsonConverter<TestKey>());
+        var serialized = JsonSerializer.Serialize(key, jsonOptions);
+        Console.WriteLine(serialized);
+        var deserialized = JsonSerializer.Deserialize<TestKey>(serialized);
+        Assert.That(deserialized, Is.EqualTo(key));
+    }
+
+    [Test]
+    [
+        TestCase("one", "One"),
+        TestCase("one_two", "One Two"),
+        TestCase("three four", "Three Four")
+    ]
+    public void ShouldDeserializeTextValue(string keyValue, string displayText)
+    {
+        var key = new TestValue(keyValue, displayText);
+        var jsonOptions = new JsonSerializerOptions();
+        jsonOptions.Converters.Add(new TextValueJsonConverter<TestValue>());
+        var serialized = JsonSerializer.Serialize(key, jsonOptions);
+        Console.WriteLine(serialized);
+        var deserialized = JsonSerializer.Deserialize<TestValue>(serialized);
+        Assert.That(deserialized, Is.EqualTo(key));
+    }
+
+    [Test]
+    [
+        TestCase("one", "One"),
+        TestCase("one_two", "One Two"),
+        TestCase("three four", "Three Four")
+    ]
+    public void ShouldConvertTextValueFromString(string keyValue, string displayText)
+    {
+        var key = new TestValue(keyValue, displayText);
+        var converted = new TextValueTypeConverter<TestValue>().ConvertFromString(keyValue);
+        Assert.That(converted, Is.EqualTo(key));
+    }
+
+    public sealed class TestKey : TextKeyValue, IEquatable<TestKey>
     {
         public TestKey(string value) : base(value)
         {
         }
 
-        public bool Equals(TextKeyValue? other) => _Equals(other);
+        public bool Equals(TestKey? other) => _Equals(other);
+    }
+
+    public sealed class TestValue : TextValue, IEquatable<TestValue>
+    {
+        public TestValue(string value, string displayText) : base(value, displayText)
+        {
+        }
+
+        public bool Equals(TestValue? other) => _Equals(other);
     }
 }

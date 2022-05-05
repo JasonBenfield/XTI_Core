@@ -2,7 +2,7 @@
 
 namespace XTI_Core.Tests;
 
-public sealed class NumericValueTest
+internal sealed class NumericValueTest
 {
     [Test]
     public void ShouldGetValueByNumericValue()

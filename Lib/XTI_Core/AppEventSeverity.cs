@@ -1,5 +1,8 @@
-﻿namespace XTI_Core;
+﻿using System.ComponentModel;
 
+namespace XTI_Core;
+
+[TypeConverter(typeof(NumericValueTypeConverter<AppEventSeverity>))]
 public sealed class AppEventSeverity : NumericValue, IEquatable<AppEventSeverity>
 {
     public sealed class AppEventSeverities : NumericValues<AppEventSeverity>

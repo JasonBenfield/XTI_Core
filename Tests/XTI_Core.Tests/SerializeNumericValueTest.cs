@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+using System.ComponentModel;
 
 namespace XTI_Core.Tests;
 
@@ -41,4 +42,27 @@ public sealed class SerializeNumericValueTest
         Assert.That(deserialized.Name, Is.EqualTo(""));
     }
 
+    [Test]
+    public void ShouldConvertNumericValueFromInt()
+    {
+        var original = EmployeeType.Values.Temp;
+        var converted = new NumericValueTypeConverter<EmployeeType>().ConvertFrom(original.Value);
+        Assert.That(converted, Is.EqualTo(original));
+    }
+
+    [Test]
+    public void ShouldConvertNumericValueFromString()
+    {
+        var original = EmployeeType.Values.Permanent;
+        var converted = new NumericValueTypeConverter<EmployeeType>().ConvertFrom(original.DisplayText);
+        Assert.That(converted, Is.EqualTo(original));
+    }
+
+    [Test]
+    public void ShouldConvertAppEventSeverityFromString()
+    {
+        var original = AppEventSeverity.Values.CriticalError;
+        var converted = TypeDescriptor.GetConverter(typeof(AppEventSeverity)).ConvertFrom("Critical Error");
+        Assert.That(converted, Is.EqualTo(original));
+    }
 }
