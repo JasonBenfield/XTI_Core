@@ -2,11 +2,12 @@
 
 namespace XTI_DB;
 
-public sealed class DbAdmin
+public sealed class DbAdmin<TDbContext>
+    where TDbContext : DbContext
 {
-    private readonly DbContext db;
+    private readonly TDbContext db;
 
-    public DbAdmin(DbContext db)
+    public DbAdmin(TDbContext db)
     {
         this.db = db;
     }
