@@ -27,8 +27,6 @@ public sealed class TimeSpanJsonConverter : JsonConverter<TimeSpan>
         return ts;
     }
 
-    public override void Write(Utf8JsonWriter writer, TimeSpan value, JsonSerializerOptions options)
-    {
-        JsonSerializer.Serialize(writer, value.ToString(), typeof(string), options);
-    }
+    public override void Write(Utf8JsonWriter writer, TimeSpan value, JsonSerializerOptions options) =>
+        writer.WriteStringValue(value.ToString());
 }

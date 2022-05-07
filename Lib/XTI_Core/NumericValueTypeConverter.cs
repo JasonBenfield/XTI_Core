@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Globalization;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace XTI_Core;
 
@@ -23,7 +18,7 @@ public sealed class NumericValueTypeConverter<T> : TypeConverter
         converter.CanConvertFrom(context, sourceType);
 
     public override object? ConvertFrom(ITypeDescriptorContext? context, CultureInfo? culture, object value) =>
-        converter.ConvertFrom(context, culture, value);
+        (T?)converter.ConvertFrom(context, culture, value);
 
     public override bool CanConvertTo(ITypeDescriptorContext? context, Type? destinationType) =>
         converter.CanConvertTo(context, destinationType);

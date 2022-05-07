@@ -27,10 +27,10 @@ namespace XTI_Core.Tests
         }
 
         [Test]
-        public void ShouldDeserializeNullNumericValue()
+        public void ShouldDeserializeNullNumericValueAsDefault()
         {
             var deserialized = XtiSerializer.Deserialize<Employee>("{ \"EmployeeType\": null }");
-            Assert.That(deserialized.EmployeeType, Is.EqualTo(EmployeeType.Values.None));
+            Assert.That(deserialized.EmployeeType, Is.EqualTo(EmployeeType.Values.GetDefault()));
         }
 
         [Test]
@@ -39,5 +39,16 @@ namespace XTI_Core.Tests
             var deserialized = XtiSerializer.Deserialize<Employee>("{ \"Department\": null }");
             Assert.That(deserialized.Department, Is.Not.Null);
         }
+
+        [Test]
+        public void ShouldDeserializeRecord()
+        {
+            var original = new TestRecord(1, EmployeeType.Values.Permanent);
+            var serialized = XtiSerializer.Serialize(original);
+            var deserialized = XtiSerializer.Deserialize(serialized, () => new TestRecord(0, EmployeeType.Values.None));
+            Assert.That(deserialized, Is.EqualTo(original));
+        }
+
+        public sealed record TestRecord(int ID, EmployeeType Type);
     }
 }

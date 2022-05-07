@@ -21,7 +21,8 @@ public static class XtiSerializer
     public static JsonSerializerOptions AddCoreConverters(this JsonSerializerOptions options)
     {
         options.AddConverter<NullStringAsEmptyJsonConverter>();
-        options.AddConverter<NumericValueJsonConverter>();
+        options.AddConverter<NumericValueJsonConverterFactory>();
+        options.AddConverter<TextValueJsonConverterFactory>();
         options.AddConverter<TimeSpanJsonConverter>();
         return options;
     }

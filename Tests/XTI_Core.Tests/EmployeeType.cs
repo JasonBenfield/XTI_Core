@@ -1,5 +1,8 @@
-﻿namespace XTI_Core.Tests;
+﻿using System.ComponentModel;
 
+namespace XTI_Core.Tests;
+
+[TypeConverter(typeof(NumericValueTypeConverter<EmployeeType>))]
 public sealed class EmployeeType : NumericValue
 {
     public sealed class EmployeeTypes : NumericValues<EmployeeType>
