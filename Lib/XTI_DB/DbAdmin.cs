@@ -17,4 +17,6 @@ public sealed class DbAdmin<TDbContext>
     public Task RestoreFrom(string backupFilePath) => new DbBackup(db).Run(backupFilePath);
 
     public Task Reset() => new DbReset(db).Run();
+
+    public Task Update() => db.Database.MigrateAsync();
 }
