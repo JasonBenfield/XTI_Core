@@ -6,7 +6,9 @@ namespace XTI_Core;
 
 public sealed class NumericValueJsonConverterFactory : JsonConverterFactory
 {
-    public override bool CanConvert(Type typeToConvert) => typeof(NumericValue).IsAssignableFrom(typeToConvert);
+    public override bool CanConvert(Type typeToConvert) => 
+        typeof(NumericValue).IsAssignableFrom(typeToConvert) &&
+        typeToConvert.GetCustomAttribute<JsonConverterAttribute>() == null;
 
     public override JsonConverter? CreateConverter(Type typeToConvert, JsonSerializerOptions options) =>
         (JsonConverter)Activator.CreateInstance

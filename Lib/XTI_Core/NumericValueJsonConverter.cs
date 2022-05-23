@@ -19,16 +19,16 @@ public sealed class NumericValueJsonConverter<T> : JsonConverter<T>
             var valuesField = typeToConvert.GetField("Values", BindingFlags.Static | BindingFlags.Public);
             if (valuesField == null)
             {
-                throw new ArgumentNullException("Values field not found");
+                throw new ArgumentNullException($"Values field not found for {typeToConvert.Name}");
             }
             var values = valuesField.GetValue(typeToConvert);
             var getDefaultMethod = valuesField.FieldType.GetMethod("GetDefault", new Type[0]);
             if (getDefaultMethod == null)
             {
-                throw new ArgumentNullException("Value method not found");
+                throw new ArgumentNullException($"Value method not found for {typeToConvert.Name}");
             }
             var defaultValue = (T?)getDefaultMethod.Invoke(values, new object[0]);
-            numericValue = defaultValue ?? throw new ArgumentNullException("numeric value should not be null");
+            numericValue = defaultValue ?? throw new ArgumentNullException($"numeric value should not be null for  {typeToConvert.Name}");
         }
         else if (reader.TokenType == JsonTokenType.Number)
         {

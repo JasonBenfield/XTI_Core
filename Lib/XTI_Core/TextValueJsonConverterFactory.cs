@@ -1,17 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
+﻿using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
 namespace XTI_Core;
 
 public sealed class TextValueJsonConverterFactory : JsonConverterFactory
 {
-    public override bool CanConvert(Type typeToConvert) => typeof(TextValue).IsAssignableFrom(typeToConvert);
+    public override bool CanConvert(Type typeToConvert) =>
+        typeof(TextValue).IsAssignableFrom(typeToConvert) &&
+        typeToConvert.GetCustomAttribute<JsonConverterAttribute>() == null;
 
     public override JsonConverter? CreateConverter(Type typeToConvert, JsonSerializerOptions options) =>
         (JsonConverter)Activator.CreateInstance
