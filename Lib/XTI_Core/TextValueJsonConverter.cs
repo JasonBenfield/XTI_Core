@@ -22,11 +22,15 @@ public sealed class TextValueJsonConverter<T> : JsonConverter<T>
             if (ctor == null)
             {
                 ctor = typeToConvert.GetConstructor(new[] { typeof(string), typeof(string) });
-                textValue = (T)(ctor?.Invoke(new[] { value, value }) ?? throw new ArgumentNullException("ctor"));
+                if (ctor == null)
+                {
+                    throw new ArgumentNullException("ctor", $"ctor not found for {typeToConvert.Name}");
+                }
+                textValue = (T)(ctor.Invoke(new[] { value, value }) ?? throw new ArgumentNullException("ctor", $"ctor for {typeToConvert.Name} returned null"));
             }
             else
             {
-                textValue = (T)(ctor?.Invoke(new[] { value }) ?? throw new ArgumentNullException("ctor"));
+                textValue = (T)(ctor.Invoke(new[] { value }) ?? throw new ArgumentNullException("ctor", $"ctor for {typeToConvert.Name} returned null"));
             }
         }
         else if (reader.TokenType == JsonTokenType.StartObject)
@@ -53,11 +57,15 @@ public sealed class TextValueJsonConverter<T> : JsonConverter<T>
             if (ctor == null)
             {
                 ctor = typeToConvert.GetConstructor(new[] { typeof(string) });
-                textValue = (T)(ctor?.Invoke(new[] { displayText }) ?? throw new ArgumentNullException("ctor"));
+                if (ctor == null)
+                {
+                    throw new ArgumentNullException("ctor", $"ctor not found for {typeToConvert.Name}");
+                }
+                textValue = (T)(ctor.Invoke(new[] { displayText }) ?? throw new ArgumentNullException($"ctor for {typeToConvert.Name} return null"));
             }
             else
             {
-                textValue = (T)(ctor?.Invoke(new[] { value, displayText }) ?? throw new ArgumentNullException("ctor"));
+                textValue = (T)(ctor.Invoke(new[] { value, displayText }) ?? throw new ArgumentNullException($"ctor for {typeToConvert.Name} return null"));
             }
         }
         else

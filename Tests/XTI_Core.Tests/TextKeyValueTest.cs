@@ -1,5 +1,6 @@
 ﻿using NUnit.Framework;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace XTI_Core.Tests;
 
@@ -107,6 +108,15 @@ public sealed class TextKeyValueTest
         Assert.That(converted, Is.EqualTo(key));
     }
 
+    [Test]
+    public void ShouldOverrideWithJsonConverterAttribute()
+    {
+        var key = new AnotherTestValue(23);
+        var serialized = XtiSerializer.Serialize(key);
+        var deserialized = XtiSerializer.Deserialize(serialized, ()=>new AnotherTestValue(0));
+        Assert.That(deserialized, Is.EqualTo(key));
+    }
+
     public sealed class TestKey : TextKeyValue, IEquatable<TestKey>
     {
         public TestKey(string value) : base(value)
@@ -123,5 +133,35 @@ public sealed class TextKeyValueTest
         }
 
         public bool Equals(TestValue? other) => _Equals(other);
+    }
+
+    public sealed class AnotherTestValueJsonConverter : JsonConverter<AnotherTestValue>
+    {
+        public override AnotherTestValue? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        {
+            AnotherTestValue? result = null;
+            if (reader.TokenType == JsonTokenType.String)
+            {
+                result = AnotherTestValue.Parse(reader.GetString() ?? "");
+            }
+            return result;
+        }
+
+        public override void Write(Utf8JsonWriter writer, AnotherTestValue value, JsonSerializerOptions options)
+        {
+            writer.WriteStringValue(value.Value);
+        }
+    }
+
+    [JsonConverter(typeof(AnotherTestValueJsonConverter))]
+    public sealed class AnotherTestValue : TextValue, IEquatable<AnotherTestValue>
+    {
+        public static AnotherTestValue Parse(string text) => new AnotherTestValue(int.Parse(text.Replace("Value", "")));
+
+        public AnotherTestValue(int value) : base($"Value{value}")
+        {
+        }
+
+        public bool Equals(AnotherTestValue? other) => _Equals(other);
     }
 }
