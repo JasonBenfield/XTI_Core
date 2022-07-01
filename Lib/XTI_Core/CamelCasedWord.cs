@@ -6,7 +6,7 @@ public sealed class CamelCasedWord : IEquatable<CamelCasedWord>, IEquatable<stri
 {
     private readonly string word;
     private readonly bool isFirstWordLower = false;
-    private static readonly Regex camelCasedRegex = new Regex("(([A-Z]{2,})(?!([a-z]+)))|([A-Z]{1}[a-z]+)|(\\d+)");
+    private static readonly Regex camelCasedRegex = new Regex("(([A-Z]{2,})(?![a-z]+))|(([A-Z]{2,})(([a-z]+)))|([A-Z]{1}[a-z]+)|(\\d+)");
 
     public CamelCasedWord(string word)
     {

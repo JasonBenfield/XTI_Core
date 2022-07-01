@@ -1,5 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Hosting.Internal;
 
 namespace XTI_Core.Extensions;
 
@@ -25,15 +27,20 @@ public sealed class XtiHostBuilder
     {
     }
 
-    public XtiHostBuilder(XtiEnvironment environment, string appName, string appType, string[] args)
+    public XtiHostBuilder(XtiEnvironment xtiEnv, string appName, string appType, string[] args)
     {
+        Environment.SetEnvironmentVariable("DOTNET_ENVIRONMENT", xtiEnv.EnvironmentName);
         Configuration = new ConfigurationBuilder();
-        Configuration.UseXtiConfiguration(environment, appName, appType, args);
+        Configuration.UseXtiConfiguration(xtiEnv, appName, appType, args);
         Services = new ServiceCollection();
+        Services.AddSingleton<IHostEnvironment>(new HostingEnvironment
+        {
+            EnvironmentName = xtiEnv.EnvironmentName
+        });
         Services.AddSingleton(_ => Configuration.Build());
         Services.AddSingleton(sp => (IConfiguration)sp.GetRequiredService<IConfigurationRoot>());
         Services.AddSingleton<XtiFolder>();
-        Services.AddSingleton(_ => environment);
+        Services.AddSingleton(_ => xtiEnv);
     }
 
     public IConfigurationBuilder Configuration { get; }

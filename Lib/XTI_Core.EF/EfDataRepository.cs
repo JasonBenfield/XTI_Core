@@ -27,6 +27,12 @@ public sealed class EfDataRepository<T> : DataRepository<T> where T : class
         return dbContext.SaveChangesAsync();
     }
 
+    public Task DeleteRange(params T[] records)
+    {
+        dbSet.RemoveRange(records);
+        return dbContext.SaveChangesAsync();
+    }
+
     public IQueryable<T> Retrieve() => dbSet;
 
     public Task Transaction(Func<Task> action) => unitOfWork.Execute(action);
