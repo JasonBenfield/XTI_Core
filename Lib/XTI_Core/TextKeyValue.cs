@@ -6,10 +6,35 @@ public class TextKeyValue : TextValue
 {
     private static readonly Regex separatorRegex = new Regex("\\s|_+");
 
-    protected TextKeyValue(string value)
-        : base(normalizeValue(value), "")
+    protected TextKeyValue(string displayText)
+        : this
+        (
+            normalizeValue(displayText),
+            string.Join
+            (
+                ' ',
+                (
+                    separatorRegex.IsMatch(displayText)
+                        ? separatorRegex.Replace(displayText, " ")
+                        : displayText
+                )
+                .Split(' ')
+                .SelectMany
+                (
+                    w => new CamelCasedWord(w).Words()
+                )
+            )
+        )
     {
-        DisplayText = displayTextFromValue(Value);
+    }
+
+    protected TextKeyValue(string value, string displayText)
+        : base(value, displayText)
+    {
+        if (string.IsNullOrWhiteSpace(displayText))
+        {
+            DisplayText = displayTextFromValue(Value);
+        }
     }
 
     private static string normalizeValue(string value)
@@ -40,8 +65,7 @@ public class TextKeyValue : TextValue
                     .Select(word => new CapitalizedWord(word).Value())
             );
 
-    protected override bool _Equals(string? other)
-    {
-        return base._Equals(normalizeValue(other ?? ""));
-    }
+    protected override bool _Equals(string? other) =>
+        base._Equals(normalizeValue(other ?? ""));
+
 }

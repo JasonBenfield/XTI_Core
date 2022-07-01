@@ -1,12 +1,15 @@
-﻿namespace XTI_Core;
+﻿using System.Text.RegularExpressions;
+
+namespace XTI_Core;
 
 public sealed class CapitalizedWord
 {
     private readonly string word;
+    private static readonly Regex ignoreRegex = new Regex("[A-Z]{2,}[a-z]+");
 
     public CapitalizedWord(string word)
     {
-        this.word = word?.ToLower() ?? "";
+        this.word = ignoreRegex.IsMatch(word) ? word : word.ToLower();
     }
 
     public string Value()
