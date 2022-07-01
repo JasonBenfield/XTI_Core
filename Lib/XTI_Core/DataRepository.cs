@@ -6,6 +6,7 @@ public interface DataRepository<T> where T : class
     IQueryable<T> Retrieve();
     Task Update(T record, Action<T> a);
     Task Delete(T record);
+    Task DeleteRange(params T[] record);
     Task Transaction(Func<Task> action);
 
 }

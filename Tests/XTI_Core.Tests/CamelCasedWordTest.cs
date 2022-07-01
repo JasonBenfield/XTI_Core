@@ -45,4 +45,11 @@ public sealed class CamelCasedWordTest
         var words = new CamelCasedWord("testText").Words();
         Assert.That(words, Is.EqualTo(new[] { "test", "Text" }));
     }
+
+    [Test]
+    public void ShouldNotSplitMultipleCapitalizedLetters()
+    {
+        var words = new CamelCasedWord("ODataDemo").Words();
+        Assert.That(words, Is.EqualTo(new[] { "OData", "Demo" }));
+    }
 }
