@@ -7,17 +7,31 @@ namespace XTI_Core.Tests;
 public sealed class TextKeyValueTest
 {
     [Test]
-    public void ShouldDisplayCapitalizedWord()
+    public void ShouldParseCapitalizedWord()
     {
-        var key = new TestKey("one");
+        var key = TestKey.Parse("one");
         Assert.That(key.DisplayText, Is.EqualTo("One"), "Should capitalize one word key");
     }
 
     [Test]
-    public void ShouldDisplayAsMultipleCapitalizedWords()
+    public void ShouldParseAsMultipleCapitalizedWords()
     {
-        var key = new TestKey("one_two");
+        var key = TestKey.Parse("one_two");
         Assert.That(key.DisplayText, Is.EqualTo("One Two"), "Should capitalize two word key");
+    }
+
+    [Test]
+    public void ShouldNotChangeWordBeginningWithTwoOrMoreCapitalLettersFollowedByLowerCase()
+    {
+        var key = new TestKey("ONe Two");
+        Assert.That(key.DisplayText, Is.EqualTo("ONe Two"), "Should not change word beginning with 2 or more capital letters followed by lower case");
+    }
+
+    [Test]
+    public void ShouldSplitWordByCamelCase()
+    {
+        var key = new TestKey("OneTwo");
+        Assert.That(key.DisplayText, Is.EqualTo("One Two"), "Should split camel cased words");
     }
 
     [Test]
@@ -119,7 +133,13 @@ public sealed class TextKeyValueTest
 
     public sealed class TestKey : TextKeyValue, IEquatable<TestKey>
     {
+        public static TestKey Parse(string value) => new TestKey(value, "");
+
         public TestKey(string value) : base(value)
+        {
+        }
+
+        private TestKey(string value, string displayText) : base(value, displayText)
         {
         }
 
