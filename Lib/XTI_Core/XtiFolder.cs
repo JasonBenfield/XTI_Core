@@ -34,6 +34,8 @@ public sealed class XtiFolder
         }
         paths.Add(Path.Combine(AppContext.BaseDirectory, "appsettings.json"));
         paths.Add(Path.Combine(AppContext.BaseDirectory, $"appsettings.{env.EnvironmentName}.json"));
+        paths.Add(Path.Combine(AppContext.BaseDirectory, "appsettings.private.json"));
+        paths.Add(Path.Combine(AppContext.BaseDirectory, $"appsettings.{env.EnvironmentName}.private.json"));
         return paths.ToArray();
     }
 
