@@ -88,17 +88,17 @@ public sealed class NumericValueTypeConverter : TypeConverter
     }
 
     public override bool CanConvertTo(ITypeDescriptorContext? context, Type? destinationType) =>
-        destinationType == typeof(TextValue);
+        destinationType == typeof(NumericValue);
 
     public override object? ConvertTo(ITypeDescriptorContext? context, CultureInfo? culture, object? value, Type destinationType)
     {
-        if (value is NumericValue textValue)
+        if (value is NumericValue numericValue)
         {
             if (destinationType == typeof(int))
             {
-                return textValue.Value;
+                return numericValue.Value;
             }
-            return textValue.DisplayText;
+            return numericValue.DisplayText;
         }
         return base.ConvertTo(context, culture, value, destinationType);
     }
