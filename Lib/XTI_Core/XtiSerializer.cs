@@ -24,6 +24,7 @@ public static class XtiSerializer
         options.AddConverter<NumericValueJsonConverterFactory>();
         options.AddConverter<TextValueJsonConverterFactory>();
         options.AddConverter<TimeSpanJsonConverter>();
+        options.AddConverter<DictionaryStringObjectJsonConverter>();
         return options;
     }
 
