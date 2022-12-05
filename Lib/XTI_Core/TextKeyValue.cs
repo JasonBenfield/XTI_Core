@@ -2,10 +2,8 @@
 
 namespace XTI_Core;
 
-public class TextKeyValue : TextValue
+public partial class TextKeyValue : TextValue
 {
-    private static readonly Regex separatorRegex = new Regex("\\s|_+");
-
     protected TextKeyValue(string displayText)
         : this
         (
@@ -14,8 +12,8 @@ public class TextKeyValue : TextValue
             (
                 ' ',
                 (
-                    separatorRegex.IsMatch(displayText)
-                        ? separatorRegex.Replace(displayText, " ")
+                    SeparatorRegex().IsMatch(displayText)
+                        ? SeparatorRegex().Replace(displayText, " ")
                         : displayText
                 )
                 .Split(' ')
@@ -40,9 +38,9 @@ public class TextKeyValue : TextValue
     private static string normalizeValue(string value)
     {
         var normalized = value;
-        if (separatorRegex.IsMatch(normalized))
+        if (SeparatorRegex().IsMatch(normalized))
         {
-            normalized = separatorRegex.Replace(normalized.ToLower(), "_");
+            normalized = SeparatorRegex().Replace(normalized.ToLower(), "_");
         }
         else
         {
@@ -68,4 +66,6 @@ public class TextKeyValue : TextValue
     protected override bool _Equals(string? other) =>
         base._Equals(normalizeValue(other ?? ""));
 
+    [GeneratedRegex("\\s|_+")]
+    private static partial Regex SeparatorRegex();
 }

@@ -2,14 +2,13 @@
 
 namespace XTI_Core;
 
-public sealed class CapitalizedWord
+public sealed partial class CapitalizedWord
 {
     private readonly string word;
-    private static readonly Regex ignoreRegex = new Regex("[A-Z]{2,}[a-z]+");
 
     public CapitalizedWord(string word)
     {
-        this.word = ignoreRegex.IsMatch(word) ? word : word.ToLower();
+        this.word = IgnoreRegex().IsMatch(word) ? word : word.ToLower();
     }
 
     public string Value()
@@ -31,4 +30,7 @@ public sealed class CapitalizedWord
     }
 
     public override string ToString() => $"{nameof(CapitalizedWord)} {word}";
+
+    [GeneratedRegex("[A-Z]{2,}[a-z]+")]
+    private static partial Regex IgnoreRegex();
 }

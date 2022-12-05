@@ -18,6 +18,8 @@ public abstract class SemanticType<T> : IEquatable<T>
         return a.Equals(b);
     }
 
+    private readonly int hashCode;
+
     protected SemanticType(T value) : this(value, "")
     {
     }
@@ -25,27 +27,9 @@ public abstract class SemanticType<T> : IEquatable<T>
     protected SemanticType(T value, string displayText)
     {
         Value = value;
-        DisplayText = getDisplayText(value, displayText);
+        DisplayText = displayText;
         hashCode = Value?.GetHashCode() ?? 0;
     }
-
-    private static string getDisplayText(T value, string displayText)
-    {
-        if (displayText == null)
-        {
-            if(value is string str)
-            {
-                displayText = str;
-            }
-            else
-            {
-                displayText = value?.ToString() ?? "";
-            }
-        }
-        return displayText ?? "";
-    }
-
-    private readonly int hashCode;
 
     public T Value { get; }
     public string DisplayText { get; protected set; }

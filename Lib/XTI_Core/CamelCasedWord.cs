@@ -2,11 +2,10 @@
 
 namespace XTI_Core;
 
-public sealed class CamelCasedWord : IEquatable<CamelCasedWord>, IEquatable<string>
+public sealed partial class CamelCasedWord : IEquatable<CamelCasedWord>, IEquatable<string>
 {
     private readonly string word;
     private readonly bool isFirstWordLower = false;
-    private static readonly Regex camelCasedRegex = new Regex("(([A-Z]{2,})(?![a-z]+))|(([A-Z]{2,})(([a-z]+)))|([A-Z]{1}[a-z]+)|(\\d+)");
 
     public CamelCasedWord(string word)
     {
@@ -23,8 +22,10 @@ public sealed class CamelCasedWord : IEquatable<CamelCasedWord>, IEquatable<stri
         }
     }
 
+    public string Format() => string.Join(" ", Words());
+
     public IEnumerable<string> Words()
-        => camelCasedRegex
+        => CamelCasedRegex()
             .Matches(word)
             .SelectMany(m => m.Captures)
             .Select((c, i) => i == 0 && isFirstWordLower ? c.Value.ToLower() : c.Value);
@@ -46,4 +47,7 @@ public sealed class CamelCasedWord : IEquatable<CamelCasedWord>, IEquatable<stri
     public override int GetHashCode() => word.GetHashCode();
 
     public override string ToString() => $"{nameof(CamelCasedWord)} {word}";
+
+    [GeneratedRegex("(([A-Z]{2,})(?![a-z]+))|(([A-Z]{2,})(([a-z]+)))|([A-Z]{1}[a-z]+)|(\\d+)")]
+    private static partial Regex CamelCasedRegex();
 }
