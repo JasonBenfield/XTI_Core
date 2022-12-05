@@ -7,6 +7,7 @@ public sealed class DbOptions
     private string source = "";
     private string userName = "";
     private string password = "";
+    private string trustServerCertificate = "Yes";
 
     public string Source
     {
@@ -24,5 +25,11 @@ public sealed class DbOptions
     {
         get => password;
         set => password = value ?? "";
+    }
+
+    public string TrustServerCertificate
+    {
+        get => trustServerCertificate;
+        set => trustServerCertificate = value ?? "";
     }
 }

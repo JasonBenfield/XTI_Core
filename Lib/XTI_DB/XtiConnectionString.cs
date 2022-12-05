@@ -1,6 +1,6 @@
 ﻿namespace XTI_DB;
 
-public class XtiConnectionString
+public sealed class XtiConnectionString
 {
     private readonly string value;
 
@@ -18,6 +18,10 @@ public class XtiConnectionString
             connStr.Add("Password", options.Password);
         }
         connStr.Add("Initial Catalog", dbName.Value);
+        if (!string.IsNullOrWhiteSpace(options.TrustServerCertificate))
+        {
+            connStr.Add("TrustServerCertificate", "Yes");
+        }
         value = string.Join(";", connStr.Keys.Select(key => $"{key}={connStr[key]}"));
     }
 

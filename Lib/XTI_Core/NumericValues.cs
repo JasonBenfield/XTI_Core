@@ -2,12 +2,9 @@
 
 namespace XTI_Core;
 
-public class NumericValues<T> where T : NumericValue
+public partial class NumericValues<T> where T : NumericValue
 {
-    private static readonly Regex whitespaceRegex = new Regex("\\s+");
-    private static readonly Regex onlyDigitsRegex = new Regex("^\\d+$");
-
-    private readonly List<T> values = new List<T>();
+    private readonly List<T> values = new ();
 
     protected NumericValues(T defaultValue)
     {
@@ -28,19 +25,25 @@ public class NumericValues<T> where T : NumericValue
 
     public T Value(string displayText)
     {
-        if (onlyDigitsRegex.IsMatch(displayText))
+        if (OnlyDigitsRegex().IsMatch(displayText))
         {
             return Value(int.Parse(displayText));
         }
         return values
             .FirstOrDefault
             (
-                v => whitespaceRegex.Replace(v.DisplayText, "")
-                    .Equals(whitespaceRegex.Replace(displayText, ""), StringComparison.OrdinalIgnoreCase)
+                v => WhitespaceRegex().Replace(v.DisplayText, "")
+                    .Equals(WhitespaceRegex().Replace(displayText, ""), StringComparison.OrdinalIgnoreCase)
             ) ?? DefaultValue;
     }
 
     public T GetDefault() => DefaultValue;
 
     public T[] GetAll() => values.ToArray();
+
+    [GeneratedRegex("\\s+")]
+    private static partial Regex WhitespaceRegex();
+
+    [GeneratedRegex("^\\d+$")]
+    private static partial Regex OnlyDigitsRegex();
 }

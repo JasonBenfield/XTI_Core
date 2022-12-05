@@ -6,13 +6,11 @@ namespace XTI_Schedule;
 
 [TypeConverter(typeof(YearDayTypeConverter))]
 [JsonConverter(typeof(YearDayJsonConverter))]
-public struct YearDay
+public partial struct YearDay
 {
-    private static readonly Regex regex = new Regex("^\\s*(?<Month>\\d{1,2})[\\/-](?<Day>\\d{1,2})\\s*$");
-
     public static YearDay Parse(string str)
     {
-        var match = regex.Match(str);
+        var match = YearDayRegex().Match(str);
         if (match.Success)
         {
             return new YearDay
@@ -38,4 +36,7 @@ public struct YearDay
     public string Format() => $"{Month}/{Day}";
 
     public override string ToString() => $"{nameof(YearDay)} {Format()}";
+
+    [GeneratedRegex("^\\s*(?<Month>\\d{1,2})[\\/-](?<Day>\\d{1,2})\\s*$")]
+    private static partial Regex YearDayRegex();
 }

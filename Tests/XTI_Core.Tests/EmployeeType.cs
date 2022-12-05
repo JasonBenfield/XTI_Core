@@ -12,10 +12,12 @@ public sealed class EmployeeType : NumericValue
             None = DefaultValue;
             Temp = Add(new EmployeeType(10, "Temp"));
             Permanent = Add(new EmployeeType(15, "Permanent"));
+            FullTime = Add(new EmployeeType(15, nameof(FullTime)));
         }
         public EmployeeType None { get; }
         public EmployeeType Temp { get; }
         public EmployeeType Permanent { get; }
+        public EmployeeType FullTime { get; }
     }
 
     public static readonly EmployeeTypes Values = new EmployeeTypes();

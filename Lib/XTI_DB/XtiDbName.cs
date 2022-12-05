@@ -1,6 +1,6 @@
 ﻿namespace XTI_DB;
 
-public class XtiDbName
+public sealed class XtiDbName
 {
     public XtiDbName(string environmentName, string dbName)
     {

@@ -12,7 +12,7 @@ public sealed class AppDataFolderTest
     public void ShouldBuildPathFromSubFolder()
     {
         var envName = "Development";
-        var services = setup(envName);
+        var services = Setup(envName);
         var appDataFolder = services.GetRequiredService<AppDataFolder>();
         Assert.That
         (
@@ -29,7 +29,7 @@ public sealed class AppDataFolderTest
     public void ShouldBuildPathFromEnvironmentName()
     {
         var envName = "Development";
-        var services = setup(envName);
+        var services = Setup(envName);
         var appDataFolder = services.GetRequiredService<AppDataFolder>();
         Assert.That
         (
@@ -46,7 +46,7 @@ public sealed class AppDataFolderTest
     public void ShouldBuildPathFromSubFolders()
     {
         var envName = "Development";
-        var services = setup(envName);
+        var services = Setup(envName);
         var appDataFolder = services.GetRequiredService<AppDataFolder>();
         Assert.That
         (
@@ -62,7 +62,7 @@ public sealed class AppDataFolderTest
         );
     }
 
-    private IServiceProvider setup(string envName)
+    private IServiceProvider Setup(string envName)
     {
         var hostBuilder = new XtiHostBuilder(XtiEnvironment.Parse(envName));
         hostBuilder.Services.AddSingleton(sp => sp.GetRequiredService<XtiFolder>().AppDataFolder());

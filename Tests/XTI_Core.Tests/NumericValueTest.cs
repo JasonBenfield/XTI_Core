@@ -19,12 +19,54 @@ internal sealed class NumericValueTest
     }
 
     [Test]
+    public void ShouldFormatCamelCasedWords()
+    {
+        Assert.That
+        (
+            EmployeeType.Values.FullTime.DisplayText, 
+            Is.EqualTo("Full Time"), 
+            "Should format camel cased words"
+        );
+    }
+
+    [Test]
+    public void ShouldGetValueByDisplayTextWithSpaces()
+    {
+        Assert.That
+        (
+            EmployeeType.Values.Value("full time"),
+            Is.EqualTo(EmployeeType.Values.FullTime),
+            "Should get value by display text with spaces"
+        );
+    }
+
+    [Test]
+    public void ShouldGetValueByDisplayTextWithoutSpaces()
+    {
+        Assert.That
+        (
+            EmployeeType.Values.Value("fullTime"),
+            Is.EqualTo(EmployeeType.Values.FullTime),
+            "Should get value by display text with spaces"
+        );
+    }
+
+    [Test]
     public void ShouldGetAllValues()
     {
         Assert.That
         (
             EmployeeType.Values.GetAll(),
-            Is.EquivalentTo(new[] { EmployeeType.Values.None, EmployeeType.Values.Temp, EmployeeType.Values.Permanent }),
+            Is.EquivalentTo
+            (
+                new[] 
+                { 
+                    EmployeeType.Values.None, 
+                    EmployeeType.Values.Temp, 
+                    EmployeeType.Values.Permanent,
+                    EmployeeType.Values.FullTime
+                }
+            ),
             "Should get all values"
         );
     }

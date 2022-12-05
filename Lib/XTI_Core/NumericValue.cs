@@ -3,7 +3,7 @@
 public abstract class NumericValue : SemanticType<int>, IEquatable<int>
 {
     protected NumericValue(int value, string displayText)
-        : base(value, displayText)
+        : base(value, new CamelCasedWord(displayText).Format())
     {
     }
 

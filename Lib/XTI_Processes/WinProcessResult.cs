@@ -3,19 +3,17 @@ using System.Text.RegularExpressions;
 
 namespace XTI_Processes;
 
-public sealed record WinProcessResult(int ExitCode, string[] OutputLines, string[] ErrorLines)
+public sealed partial record WinProcessResult(int ExitCode, string[] OutputLines, string[] ErrorLines)
 {
-    private static readonly Regex dataRegex = new Regex("<data>(.*)<\\/data>");
-
     public T Data<T>()
         where T : new() =>
-        Data<T>(() => new T());
+        Data(() => new T());
 
     public T Data<T>(Func<T> ifnull)
     {
         T data;
         var output = joinedOutput();
-        var m = dataRegex.Match(output);
+        var m = DataRegex().Match(output);
         if (m.Success)
         {
             data = JsonSerializer.Deserialize<T>(m.Groups[1].Value) ?? ifnull();
@@ -59,4 +57,7 @@ public sealed record WinProcessResult(int ExitCode, string[] OutputLines, string
         }
         throw new Exception(message);
     }
+
+    [GeneratedRegex("<data>(.*)<\\/data>")]
+    private static partial Regex DataRegex();
 }
