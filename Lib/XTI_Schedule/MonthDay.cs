@@ -6,19 +6,17 @@ namespace XTI_Schedule;
 
 [TypeConverter(typeof(MonthDayTypeConverter))]
 [JsonConverter(typeof(MonthDayJsonConverter))]
-public struct MonthDay
+public partial struct MonthDay
 {
-    public static readonly MonthDay LastDay = new MonthDay(int.MaxValue);
-
-    private readonly static Regex regex = new Regex("^(?:(?<Last>Last)|(?<Day>\\d{1,2}))$", RegexOptions.IgnoreCase);
+    public static readonly MonthDay LastDay = new(int.MaxValue);
 
     public static MonthDay Parse(string str)
     {
         MonthDay monthDay;
-        var match = regex.Match(str);
+        var match = regex().Match(str);
         if (match.Groups["Last"].Success)
         {
-            monthDay = MonthDay.LastDay;
+            monthDay = LastDay;
         }
         else if (match.Groups["Day"].Success)
         {
@@ -40,17 +38,20 @@ public struct MonthDay
 
     public bool IsLastDay() => Value == int.MaxValue;
 
-    public DateTime ToDate(DateTimeOffset time)
+    public DateOnly ToDate(DateOnly date)
     {
         if (IsLastDay())
         {
-            return new DateTime(time.Year, time.Month, 1).AddMonths(1).AddDays(-1);
+            return new DateOnly(date.Year, date.Month, 1).AddMonths(1).AddDays(-1);
         }
-        return new DateTime(time.Year, time.Month, 1).AddDays(Value - 1);
+        return new DateOnly(date.Year, date.Month, 1).AddDays(Value - 1);
     }
 
     public string Format()
         => IsLastDay() ? "Last" : Value.ToString();
 
     public override string ToString() => $"{nameof(MonthDay)} {Format()}";
+
+    [GeneratedRegex("^(?:(?<Last>Last)|(?<Day>\\d{1,2}))$", RegexOptions.IgnoreCase, "en-US")]
+    private static partial Regex regex();
 }

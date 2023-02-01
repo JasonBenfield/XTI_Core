@@ -6,15 +6,15 @@ public sealed class MonthlyOrdinalSchedule : IDaySchedule
 {
     public MonthlyOrdinalSchedule(params MonthlyOrdinalDayOfWeek[] days)
     {
-        Days = days ?? new MonthlyOrdinalDayOfWeek[] { };
+        Days = days ?? new MonthlyOrdinalDayOfWeek[0];
     }
 
     internal MonthlyOrdinalDayOfWeek[] Days { get; }
 
-    public bool IsInRange(DateTimeOffset value)
-        => Days.Any(d => d.ToDate(value.Date) == value.Date);
+    public bool IsInRange(DateOnly value)
+        => Days.Any(d => d.ToDate(value) == value);
 
-    public DateTime[] AllowedDates(DateRange range)
+    public DateOnly[] AllowedDates(DateRange range)
         => range
             .Dates()
             .Where(d => IsInRange(d))

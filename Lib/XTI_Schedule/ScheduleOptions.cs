@@ -49,31 +49,31 @@ public sealed class ScheduleOptions
         => new AggregateSchedule(ToSchedules());
 
     public Schedule[] ToSchedules()
-        => (WeeklySchedules ?? new WeeklyScheduleOptions[] { })
+        => (WeeklySchedules ?? new WeeklyScheduleOptions[0])
         .Select(tr => tr.ToSchedule())
         .Union
         (
-            (MonthlySchedules ?? new MonthlyScheduleOptions[] { })
+            (MonthlySchedules ?? new MonthlyScheduleOptions[0])
                 .Select(tr => tr.ToSchedule())
         )
         .Union
         (
-            (MonthlyOrdinalSchedules ?? new MonthlyOrdinalScheduleOptions[] { })
+            (MonthlyOrdinalSchedules ?? new MonthlyOrdinalScheduleOptions[0])
                 .Select(tr => tr.ToSchedule())
         )
         .Union
         (
-            (YearlySchedules ?? new YearlyScheduleOptions[] { })
+            (YearlySchedules ?? new YearlyScheduleOptions[0])
                 .Select(tr => tr.ToSchedule())
         )
         .Union
         (
-            (YearlyOrdinalSchedules ?? new YearlyOrdinalScheduleOptions[] { })
+            (YearlyOrdinalSchedules ?? new YearlyOrdinalScheduleOptions[0])
                 .Select(tr => tr.ToSchedule())
         )
         .Union
         (
-            (PeriodicSchedules ?? new PeriodicScheduleOptions[] { })
+            (PeriodicSchedules ?? new PeriodicScheduleOptions[0])
                 .Select(tr => tr.ToSchedule())
         )
         .ToArray();

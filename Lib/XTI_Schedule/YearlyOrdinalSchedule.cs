@@ -11,12 +11,12 @@ public sealed class YearlyOrdinalSchedule : IDaySchedule
 
     internal YearlyOrdinalDayOfWeek[] Days { get; }
 
-    public bool IsInRange(DateTimeOffset value)
+    public bool IsInRange(DateOnly value)
         => Days
-            .SelectMany(d => d.ToDates(value.Date))
-            .Any(d => d == value.Date);
+            .SelectMany(d => d.ToDates(value))
+            .Any(d => d == value);
 
-    public DateTime[] AllowedDates(DateRange range)
+    public DateOnly[] AllowedDates(DateRange range)
         => range
             .Dates()
             .Where(d => IsInRange(d))

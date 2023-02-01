@@ -6,54 +6,51 @@ namespace XTI_Core;
 [JsonConverter(typeof(TimeRangeJsonConverter))]
 public struct TimeRange
 {
-    public static TimeRange Deserialize(string str)
-    {
-        var options = new JsonSerializerOptions();
-        options.Converters.Add(new TimeRangeJsonConverter());
-        return JsonSerializer.Deserialize<TimeRange>(str, options);
-    }
+    public static Builder1 From(string time) => From(TimeOnly.Parse(time));
 
-    public static Builder1 From(string time) => From(Time.Parse(time));
+    public static Builder1 From(int hour, int minute = 0, int second = 0, int millisecond = 0) => From(new TimeOnly(hour, minute, second, millisecond));
 
-    public static Builder1 From(int hour, int minute = 0, int second = 0, int millisecond = 0) => From(new Time(hour, minute, second, millisecond));
+    public static Builder1 From(TimeOnly time) => new Builder1(time);
 
-    public static Builder1 From(Time time) => new Builder1(time);
+    public static TimeRange AllDay() => From(new TimeOnly()).For(24).Hours();
 
-    public static TimeRange AllDay() => From(new Time()).For(24).Hours();
-
-    public TimeRange(Time startTime, TimeSpan duration)
+    public TimeRange(TimeOnly startTime, TimeSpan duration)
     {
         Start = startTime;
         Duration = duration;
     }
 
-    public Time Start { get; }
+    public TimeOnly Start { get; }
     public TimeSpan Duration { get; }
 
-    public DateTimeOffset StartTime(DateTimeOffset date) => date.ToLocalTime().Date.Add(Start.ToTimeSpan());
+    public DateTimeOffset StartTime(DateOnly date) => new DateTimeOffset(date.ToDateTime(Start));
 
-    public DateTimeOffset EndTime(DateTimeOffset date) => StartTime(date).Add(Duration);
+    public DateTimeOffset EndTime(DateOnly date) => StartTime(date).Add(Duration);
 
-    public DateTimeRange Range(DateTimeOffset date)
+    public DateTimeRange Range(DateOnly date)
         => DateTimeRange.Between(StartTime(date), EndTime(date));
 
-    public bool IsInTimeRange(DateTimeOffset value)
-        => DateTimeRange.Between(StartTime(value), EndTime(value)).IsInRange(value);
+    public bool IsInTimeRange(TimeOnly time)
+        => IsInTimeRange(DateOnly.FromDateTime(DateTime.Today).ToDateTime(time));
 
-    public string Serialize()
-    {
-        var options = new JsonSerializerOptions();
-        options.Converters.Add(new TimeRangeJsonConverter());
-        return JsonSerializer.Serialize(this, options);
-    }
+    public bool IsInTimeRange(DateTime dateTime)
+        => IsInTimeRange(new DateTimeOffset(dateTime));
+
+    public bool IsInTimeRange(DateTimeOffset value)
+        => DateTimeRange.Between
+        (
+            StartTime(DateOnly.FromDateTime(value.Date)), 
+            EndTime(DateOnly.FromDateTime(value.Date))
+        )
+        .IsInRange(value);
 
     public override string ToString() => $"TimeRange({Start} for {Duration})";
 
     public sealed class Builder1
     {
-        private readonly Time time;
+        private readonly TimeOnly time;
 
-        public Builder1(Time time)
+        public Builder1(TimeOnly time)
         {
             this.time = time;
         }
@@ -71,10 +68,10 @@ public struct TimeRange
 
     public sealed class Builder2
     {
-        private readonly Time time;
+        private readonly TimeOnly time;
         private readonly double quantity;
 
-        public Builder2(Time time, double quantity)
+        public Builder2(TimeOnly time, double quantity)
         {
             this.time = time;
             this.quantity = quantity;

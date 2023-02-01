@@ -7,7 +7,7 @@ public sealed class Schedule
     private readonly IDaySchedule[] daySchedules;
     private readonly TimeRange[] timeRanges;
 
-    public static ScheduleBuilder Build() => new ScheduleBuilder();
+    public static ScheduleBuilder Build() => new();
 
     public static NextScheduleBuilder On(params DayOfWeek[] daysOfWeek)
         => Build().On(daysOfWeek);
@@ -47,8 +47,8 @@ public sealed class Schedule
 
     internal Schedule(IDaySchedule[] daySchedules, params TimeRange[] timeRanges)
     {
-        this.daySchedules = daySchedules ?? new IDaySchedule[] { };
-        this.timeRanges = timeRanges ?? new TimeRange[] { };
+        this.daySchedules = daySchedules ?? new IDaySchedule[0];
+        this.timeRanges = timeRanges ?? new TimeRange[0];
     }
 
     public bool IsInSchedule(DateTime value) => IsInSchedule(new DateTimeOffset(value));
@@ -56,12 +56,12 @@ public sealed class Schedule
     public bool IsInSchedule(DateTimeOffset value)
     {
         value = value.ToLocalTime();
-        return daySchedules.Any(dr => dr.IsInRange(value))
+        return daySchedules.Any(dr => dr.IsInRange(DateOnly.FromDateTime(value.Date)))
             && timeRanges.Any(tr => tr.IsInTimeRange(value));
     }
 
-    public DateTimeRange[] DateTimeRanges(DateRange range)
-        => daySchedules
+    public DateTimeRange[] DateTimeRanges(DateRange range) =>
+        daySchedules
             .SelectMany(dr => dr.AllowedDates(range))
             .SelectMany(d => timeRanges.Select(tr => tr.Range(d)))
             .OrderBy(tr => tr)
@@ -160,7 +160,7 @@ public sealed class Schedule
                 }
             )
             .ToArray();
-        return new ScheduleOptions()
+        return new ScheduleOptions
         {
             WeeklySchedules = weeklySchedules,
             MonthlySchedules = monthlySchedules,

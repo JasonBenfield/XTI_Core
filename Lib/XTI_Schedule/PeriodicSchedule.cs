@@ -20,19 +20,24 @@ public sealed class PeriodicSchedule : IDaySchedule
     }
 
     public PeriodicSchedule(int frequency, DateInterval interval, DateTime startDate)
+        : this(frequency, interval, DateOnly.FromDateTime(startDate))
+    {
+    }
+
+    public PeriodicSchedule(int frequency, DateInterval interval, DateOnly startDate)
     {
         Frequency = frequency;
         Interval = interval;
-        StartDate = startDate.Date;
+        StartDate = startDate;
     }
 
     internal int Frequency { get; }
     internal DateInterval Interval { get; }
-    internal DateTime StartDate { get; }
+    internal DateOnly StartDate { get; }
 
-    public bool IsInRange(DateTimeOffset value)
+    public bool IsInRange(DateOnly value)
     {
-        var dateValue = value.Date;
+        var dateValue = value;
         if (dateValue < StartDate)
         {
             return false;
@@ -48,12 +53,12 @@ public sealed class PeriodicSchedule : IDaySchedule
             {
                 numberOfDays = Frequency * 7;
             }
-            var ts = dateValue - StartDate;
+            var ts = dateValue.ToDateTime(new TimeOnly()) - StartDate.ToDateTime(new TimeOnly());
             return ts.TotalDays % numberOfDays == 0;
         }
         else if (Interval == DateInterval.Months)
         {
-            var date = StartDate.Date;
+            var date = StartDate;
             while (date < dateValue)
             {
                 date = date.AddMonths(Frequency);
@@ -62,7 +67,7 @@ public sealed class PeriodicSchedule : IDaySchedule
         }
         else if (Interval == DateInterval.Years)
         {
-            var date = StartDate.Date;
+            var date = StartDate;
             while (date < dateValue)
             {
                 date = date.AddYears(Frequency);
@@ -72,7 +77,7 @@ public sealed class PeriodicSchedule : IDaySchedule
         return false;
     }
 
-    public DateTime[] AllowedDates(DateRange range)
+    public DateOnly[] AllowedDates(DateRange range)
         => range
             .Dates()
             .Where(d => IsInRange(d))
@@ -104,7 +109,7 @@ public sealed class PeriodicSchedule : IDaySchedule
             this.interval = interval;
         }
 
-        public PeriodicSchedule Starting(DateTime when)
+        public PeriodicSchedule Starting(DateOnly when)
             => new PeriodicSchedule(frequency, interval, when);
     }
 }

@@ -2,62 +2,74 @@
 
 public sealed class DateRange : IEquatable<DateRange>, IEquatable<DateTimeRange>, IComparable<DateRange>
 {
+    public static DateRange All() => Between(DateOnly.MinValue, DateOnly.MaxValue);
+
     public static DateRange OnOrAfter(DateTimeOffset start) => OnOrAfter(start.Date);
 
-    public static DateRange OnOrAfter(DateTime start) => Between(start, DateTime.MaxValue);
+    public static DateRange OnOrAfter(DateTime start) => OnOrAfter(DateOnly.FromDateTime(start.Date));
+
+    public static DateRange OnOrAfter(DateOnly start) => Between(start, DateOnly.MaxValue);
 
     public static DateRange OnOrBefore(DateTimeOffset end) => OnOrBefore(end.Date);
 
-    public static DateRange OnOrBefore(DateTime end) => Between(DateTime.MinValue, end);
+    public static DateRange OnOrBefore(DateTime end) => OnOrBefore(DateOnly.FromDateTime(end));
+
+    public static DateRange OnOrBefore(DateOnly end) => Between(DateOnly.MinValue, end);
 
     public static DateRange On(DateTimeOffset date) => On(date.Date);
 
-    public static DateRange On(DateTime date) => Between(date, date);
+    public static DateRange On(DateTime date) => On(DateOnly.FromDateTime(date));
+
+    public static DateRange On(DateOnly date) => Between(date, date);
 
     public static DateRange Between(DateTimeOffset start, DateTimeOffset end)
-        => Between(start.Date, end.Date);
+        => Between
+        (
+            start == DateTimeOffset.MinValue ? DateOnly.MinValue : DateOnly.FromDateTime(start.Date),
+            end == DateTimeOffset.MaxValue ? DateOnly.MaxValue : DateOnly.FromDateTime(end.Date)
+        );
 
-    public static DateRange Between(DateTime startDate, DateTime endDate)
-    {
-        if (startDate > DateTime.MinValue)
-        {
-            startDate = startDate.Date;
-        }
-        if (endDate < DateTime.MaxValue)
-        {
-            endDate = endDate.Date.AddDays(1).AddTicks(-1);
-        }
-        return new DateRange(DateTimeRange.Between(startDate, endDate));
-    }
+    public static DateRange Between(DateTime start, DateTime end)
+        => Between
+        (
+            start == DateTime.MinValue ? DateOnly.MinValue : DateOnly.FromDateTime(start.Date),
+            end == DateTime.MaxValue ? DateOnly.MaxValue : DateOnly.FromDateTime(end.Date)
+        );
+
+    public static DateRange Between(DateOnly startDate, DateOnly endDate) =>
+        new DateRange(startDate, endDate);
 
     public static Builder1 From(DateTimeOffset start) => From(start.LocalDateTime.Date);
 
-    public static Builder1 From(DateTime start) => new Builder1(start);
+    public static Builder1 From(DateTime start) => From(DateOnly.FromDateTime(start.Date));
 
-    private DateRange(DateTimeRange timeRange)
+    public static Builder1 From(DateOnly start) => new Builder1(start);
+
+    private readonly int hashCode;
+
+    private DateRange(DateOnly start, DateOnly end)
     {
-        TimeRange = timeRange;
-        Start = timeRange.Start.Date;
-        End = timeRange.End.Date;
+        Start = start;
+        End = end;
+        hashCode = $"{Start}|{End}".GetHashCode();
     }
 
-    public DateTimeRange TimeRange { get; }
-    public DateTime Start { get; }
-    public DateTime End { get; }
+    public DateOnly Start { get; }
+    public DateOnly End { get; }
 
-    public DateTime[] Dates()
+    public DateOnly[] Dates()
     {
-        if (TimeRange.Start == DateTimeOffset.MinValue)
+        if (!HasLowerBound())
         {
             throw new ArgumentException("Unable to get dates when start is MinValue");
         }
-        if (TimeRange.End == DateTimeOffset.MaxValue)
+        if (!HasUpperBound())
         {
             throw new ArgumentException("Unable to get dates when end is MaxValue");
         }
-        var dates = new List<DateTime>();
-        var startDate = TimeRange.Start.Date;
-        var endDate = TimeRange.End.Date;
+        var dates = new List<DateOnly>();
+        var startDate = Start;
+        var endDate = End;
         var date = startDate;
         while (date <= endDate)
         {
@@ -69,18 +81,20 @@ public sealed class DateRange : IEquatable<DateRange>, IEquatable<DateTimeRange>
 
     public bool IsInRange(DateTimeOffset value) => IsInRange(value.Date);
 
-    public bool IsInRange(DateTime value) => TimeRange.IsInRange(value);
+    public bool IsInRange(DateTime value) => IsInRange(DateOnly.FromDateTime(value));
 
-    public bool HasLowerBound() => TimeRange.HasLowerBound();
+    public bool IsInRange(DateOnly value) => value >= Start && value <= End;
 
-    public bool HasUpperBound() => TimeRange.HasUpperBound();
+    public bool HasLowerBound() => Start > DateOnly.MinValue;
+
+    public bool HasUpperBound() => End < DateOnly.MaxValue;
 
     public string Format()
     {
         string rangeText;
         if (HasLowerBound() && HasUpperBound())
         {
-            if (Start.Date == End.Date)
+            if (Start == End)
             {
                 rangeText = $"On {Start:M/dd/yy}";
             }
@@ -119,42 +133,48 @@ public sealed class DateRange : IEquatable<DateRange>, IEquatable<DateTimeRange>
         return base.Equals(obj);
     }
 
-    public bool Equals(DateRange? other) => TimeRange.Equals(other?.TimeRange);
+    public bool Equals(DateRange? other) =>
+        Start == other?.Start && End == other?.End;
 
-    public bool Equals(DateTimeRange? other) => TimeRange.Equals(other);
+    public bool Equals(DateTimeRange? other)
+    {
+        bool equals;
+        if (other == null)
+        {
+            equals = false;
+        }
+        else
+        {
+            equals = new DateTimeOffset(Start.ToDateTime(new TimeOnly())) == other.Start &&
+                new DateTimeOffset(End.ToDateTime(new TimeOnly())) == other.End;
+        }
+        return equals;
+    }
 
-    public override int GetHashCode() => TimeRange.GetHashCode();
+    public override int GetHashCode() => hashCode;
 
     public int CompareTo(DateRange? other)
     {
-        int result = Start.CompareTo(other?.Start ?? DateTimeOffset.MaxValue);
+        int result = Start.CompareTo(other?.Start ?? DateOnly.MaxValue);
         if (result != 0)
         {
-            result = End.CompareTo(other?.End ?? DateTimeOffset.MaxValue);
+            result = End.CompareTo(other?.End ?? DateOnly.MaxValue);
         }
         return result;
     }
 
     public sealed class Builder1
     {
-        private readonly DateTime start;
+        private readonly DateOnly start;
 
-        internal Builder1(DateTime start)
+        internal Builder1(DateOnly start)
         {
             this.start = start;
         }
 
-        public DateRange Until(DateTimeOffset end) => Between(start, end);
+        public DateRange Until(DateOnly end) => Between(start, end);
 
-        public Builder2 For(double quantity) => new Builder2(start, quantity);
-
-        public DateRange ForOneMillisecond() => new Builder2(start, 1).Milliseconds();
-
-        public DateRange ForOneSecond() => new Builder2(start, 1).Seconds();
-
-        public DateRange ForOneMinute() => new Builder2(start, 1).Minutes();
-
-        public DateRange ForOneHour() => new Builder2(start, 1).Hours();
+        public Builder2 For(int quantity) => new Builder2(start, quantity);
 
         public DateRange ForOneDay() => new Builder2(start, 1).Days();
 
@@ -163,26 +183,14 @@ public sealed class DateRange : IEquatable<DateRange>, IEquatable<DateTimeRange>
 
     public sealed class Builder2
     {
-        private readonly DateTime start;
-        private readonly double quantity;
+        private readonly DateOnly start;
+        private readonly int quantity;
 
-        public Builder2(DateTime start, double quantity)
+        public Builder2(DateOnly start, int quantity)
         {
             this.start = start;
             this.quantity = quantity;
         }
-
-        public DateRange Milliseconds()
-            => ToDateRange(TimeSpan.FromMilliseconds(quantity));
-
-        public DateRange Seconds()
-            => ToDateRange(TimeSpan.FromSeconds(quantity));
-
-        public DateRange Minutes()
-            => ToDateRange(TimeSpan.FromMinutes(quantity));
-
-        public DateRange Hours()
-            => ToDateRange(TimeSpan.FromHours(quantity));
 
         public DateRange Days()
             => ToDateRange(TimeSpan.FromDays(quantity));
@@ -191,7 +199,7 @@ public sealed class DateRange : IEquatable<DateRange>, IEquatable<DateTimeRange>
             => ToDateRange(TimeSpan.FromDays(quantity * 7));
 
         private DateRange ToDateRange(TimeSpan ts)
-            => Between(start, start.Add(ts));
+            => Between(start, start.AddDays(ts.Days));
 
     }
 }

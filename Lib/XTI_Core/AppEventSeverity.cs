@@ -13,14 +13,16 @@ public sealed class AppEventSeverity : NumericValue, IEquatable<AppEventSeverity
             : base(new AppEventSeverity(0, "Not Set"))
         {
             NotSet = DefaultValue;
-            CriticalError = add(100, "Critical Error");
-            AccessDenied = add(80, "Access Denied");
-            AppError = add(70, "App Error");
-            ValidationFailed = add(60, "Validation Failed");
-            Information = add(50, "Information");
+            CriticalError = Add(100, "Critical Error");
+            AccessDenied = Add(80, "Access Denied");
+            AppError = Add(70, "App Error");
+            ValidationFailed = Add(60, "Validation Failed");
+            Information = Add(50, "Information");
         }
-        private AppEventSeverity add(int value, string displayText) =>
+
+        private AppEventSeverity Add(int value, string displayText) =>
             Add(new AppEventSeverity(value, displayText));
+
         public AppEventSeverity NotSet { get; }
         public AppEventSeverity CriticalError { get; }
         public AppEventSeverity AccessDenied { get; }
@@ -29,7 +31,7 @@ public sealed class AppEventSeverity : NumericValue, IEquatable<AppEventSeverity
         public AppEventSeverity Information { get; }
     }
 
-    public static readonly AppEventSeverities Values = new AppEventSeverities();
+    public static readonly AppEventSeverities Values = new();
 
     private AppEventSeverity(int value, string displayText)
         : base(value, displayText)

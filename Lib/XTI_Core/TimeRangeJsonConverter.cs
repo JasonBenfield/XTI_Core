@@ -9,7 +9,7 @@ public sealed class TimeRangeJsonConverter : JsonConverter<TimeRange>
 
     public override TimeRange Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
-        var startTime = new Time();
+        var startTime = new TimeOnly();
         var duration = TimeSpan.MaxValue;
         if (reader.TokenType == JsonTokenType.Null)
         {
@@ -26,8 +26,8 @@ public sealed class TimeRangeJsonConverter : JsonConverter<TimeRange>
                     if (propName == nameof(TimeRange.Start))
                     {
                         var timeOptions = new JsonSerializerOptions();
-                        timeOptions.Converters.Add(new TimeJsonConverter());
-                        startTime = JsonSerializer.Deserialize<Time>(ref reader, timeOptions);
+                        timeOptions.Converters.Add(new TimeOnlyJsonConverter());
+                        startTime = JsonSerializer.Deserialize<TimeOnly>(ref reader, timeOptions);
                     }
                     else if (propName == nameof(TimeRange.Duration))
                     {
@@ -44,14 +44,8 @@ public sealed class TimeRangeJsonConverter : JsonConverter<TimeRange>
     public override void Write(Utf8JsonWriter writer, TimeRange value, JsonSerializerOptions options)
     {
         writer.WriteStartObject();
-        writer.WriteString(nameof(TimeRange.Start), value.Start.ToString());
+        writer.WriteString(nameof(TimeRange.Start), value.Start.ToString("O"));
         writer.WriteString(nameof(TimeRange.Duration), value.Duration.ToString());
         writer.WriteEndObject();
-    }
-
-    private sealed class JsonTimeRange
-    {
-        public string Start { get; set; } = "";
-        public string Duration { get; set; } = "";
     }
 }

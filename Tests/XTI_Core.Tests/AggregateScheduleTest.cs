@@ -180,7 +180,7 @@ internal sealed class AggregateScheduleTest
             Is.EqualTo(new[] { DayOfWeek.Monday, DayOfWeek.Wednesday })
         );
         Assert.That(options.WeeklySchedules[0].TimeRanges.Length, Is.EqualTo(1));
-        Assert.That(options.WeeklySchedules[0].TimeRanges[0].Start, Is.EqualTo(new Time(10, 0)));
+        Assert.That(options.WeeklySchedules[0].TimeRanges[0].Start, Is.EqualTo(new TimeOnly(10, 0)));
         Assert.That(options.WeeklySchedules[0].TimeRanges[0].Duration, Is.EqualTo(new TimeSpan(2, 30, 0)));
     }
 
@@ -204,7 +204,7 @@ internal sealed class AggregateScheduleTest
             Is.EqualTo(new[] { new MonthDay(15), MonthDay.LastDay })
         );
         Assert.That(options.MonthlySchedules[0].TimeRanges.Length, Is.EqualTo(1));
-        Assert.That(options.MonthlySchedules[0].TimeRanges[0].Start, Is.EqualTo(new Time(10, 0)));
+        Assert.That(options.MonthlySchedules[0].TimeRanges[0].Start, Is.EqualTo(new TimeOnly(10, 0)));
         Assert.That(options.MonthlySchedules[0].TimeRanges[0].Duration, Is.EqualTo(new TimeSpan(2, 30, 0)));
     }
 
@@ -227,7 +227,7 @@ internal sealed class AggregateScheduleTest
         Assert.That(options.MonthlyOrdinalSchedules[0].Days[0].Week, Is.EqualTo(OrdinalWeek.Second));
         Assert.That(options.MonthlyOrdinalSchedules[0].Days[0].DayOfWeek, Is.EqualTo(DayOfWeek.Thursday));
         Assert.That(options.MonthlyOrdinalSchedules[0].TimeRanges.Length, Is.EqualTo(1));
-        Assert.That(options.MonthlyOrdinalSchedules[0].TimeRanges[0].Start, Is.EqualTo(new Time(10, 0)));
+        Assert.That(options.MonthlyOrdinalSchedules[0].TimeRanges[0].Start, Is.EqualTo(new TimeOnly(10, 0)));
         Assert.That(options.MonthlyOrdinalSchedules[0].TimeRanges[0].Duration, Is.EqualTo(new TimeSpan(2, 30, 0)));
     }
 
@@ -238,20 +238,20 @@ internal sealed class AggregateScheduleTest
         (
             new[]
             {
-                    KeyValuePair.Create("PeriodicSchedules:0:Frequency", "2"),
-                    KeyValuePair.Create("PeriodicSchedules:0:Interval", "Weeks"),
-                    KeyValuePair.Create("PeriodicSchedules:0:StartDate", "10/2/2021"),
-                    KeyValuePair.Create("PeriodicSchedules:0:TimeRanges:0:Start", "10 AM"),
-                    KeyValuePair.Create("PeriodicSchedules:0:TimeRanges:0:Duration", "2:30:00")
+                KeyValuePair.Create("PeriodicSchedules:0:Frequency", "2"),
+                KeyValuePair.Create("PeriodicSchedules:0:Interval", "Weeks"),
+                KeyValuePair.Create("PeriodicSchedules:0:StartDate", "10/2/2021"),
+                KeyValuePair.Create("PeriodicSchedules:0:TimeRanges:0:Start", "10 AM"),
+                KeyValuePair.Create("PeriodicSchedules:0:TimeRanges:0:Duration", "2:30:00")
             }
         );
         var options = services.GetRequiredService<ScheduleOptions>();
         Assert.That(options.PeriodicSchedules.Length, Is.EqualTo(1));
         Assert.That(options.PeriodicSchedules[0].Frequency, Is.EqualTo(2));
         Assert.That(options.PeriodicSchedules[0].Interval, Is.EqualTo(DateInterval.Weeks));
-        Assert.That(options.PeriodicSchedules[0].StartDate, Is.EqualTo(new DateTime(2021, 10, 2)));
+        Assert.That(options.PeriodicSchedules[0].StartDate, Is.EqualTo(new DateOnly(2021, 10, 2)));
         Assert.That(options.PeriodicSchedules[0].TimeRanges.Length, Is.EqualTo(1));
-        Assert.That(options.PeriodicSchedules[0].TimeRanges[0].Start, Is.EqualTo(new Time(10, 0)));
+        Assert.That(options.PeriodicSchedules[0].TimeRanges[0].Start, Is.EqualTo(new TimeOnly(10, 0)));
         Assert.That(options.PeriodicSchedules[0].TimeRanges[0].Duration, Is.EqualTo(new TimeSpan(2, 30, 0)));
     }
 
@@ -264,7 +264,7 @@ internal sealed class AggregateScheduleTest
             {
                     KeyValuePair.Create("YearlySchedules:0:Days:0", "4/18"),
                     KeyValuePair.Create("YearlySchedules:0:Days:1", "9/7"),
-                    KeyValuePair.Create("YearlySchedules:0:TimeRanges:0:Start", "10 AM"),
+                    KeyValuePair.Create("YearlySchedules:0:TimeRanges:0:Start", "10:00"),
                     KeyValuePair.Create("YearlySchedules:0:TimeRanges:0:Duration", "2:30:00")
             }
         );
@@ -279,7 +279,7 @@ internal sealed class AggregateScheduleTest
             )
         );
         Assert.That(options.YearlySchedules[0].TimeRanges.Length, Is.EqualTo(1));
-        Assert.That(options.YearlySchedules[0].TimeRanges[0].Start, Is.EqualTo(new Time(10, 0)));
+        Assert.That(options.YearlySchedules[0].TimeRanges[0].Start, Is.EqualTo(new TimeOnly(10, 0)));
         Assert.That(options.YearlySchedules[0].TimeRanges[0].Duration, Is.EqualTo(new TimeSpan(2, 30, 0)));
     }
 
@@ -290,12 +290,12 @@ internal sealed class AggregateScheduleTest
         (
             new[]
             {
-                    KeyValuePair.Create("YearlyOrdinalSchedules:0:Days:0:Week", "Second"),
-                    KeyValuePair.Create("YearlyOrdinalSchedules:0:Days:0:DayOfWeek", "Thursday"),
-                    KeyValuePair.Create("YearlyOrdinalSchedules:0:Days:0:Months:0", "March"),
-                    KeyValuePair.Create("YearlyOrdinalSchedules:0:Days:0:Months:1", "May"),
-                    KeyValuePair.Create("YearlyOrdinalSchedules:0:TimeRanges:0:Start", "10 AM"),
-                    KeyValuePair.Create("YearlyOrdinalSchedules:0:TimeRanges:0:Duration", "2:30:00")
+                KeyValuePair.Create("YearlyOrdinalSchedules:0:Days:0:Week", "Second"),
+                KeyValuePair.Create("YearlyOrdinalSchedules:0:Days:0:DayOfWeek", "Thursday"),
+                KeyValuePair.Create("YearlyOrdinalSchedules:0:Days:0:Months:0", "March"),
+                KeyValuePair.Create("YearlyOrdinalSchedules:0:Days:0:Months:1", "May"),
+                KeyValuePair.Create("YearlyOrdinalSchedules:0:TimeRanges:0:Start", "10 AM"),
+                KeyValuePair.Create("YearlyOrdinalSchedules:0:TimeRanges:0:Duration", "2:30:00")
             }
         );
         var options = services.GetRequiredService<ScheduleOptions>();
@@ -309,7 +309,7 @@ internal sealed class AggregateScheduleTest
             Is.EqualTo(new[] { Months.March, Months.May })
         );
         Assert.That(options.YearlyOrdinalSchedules[0].TimeRanges.Length, Is.EqualTo(1));
-        Assert.That(options.YearlyOrdinalSchedules[0].TimeRanges[0].Start, Is.EqualTo(new Time(10, 0)));
+        Assert.That(options.YearlyOrdinalSchedules[0].TimeRanges[0].Start, Is.EqualTo(new TimeOnly(10, 0)));
         Assert.That(options.YearlyOrdinalSchedules[0].TimeRanges[0].Duration, Is.EqualTo(new TimeSpan(2, 30, 0)));
     }
 

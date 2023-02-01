@@ -4,6 +4,6 @@ namespace XTI_Schedule;
 
 public interface IDaySchedule
 {
-    bool IsInRange(DateTimeOffset value);
-    DateTime[] AllowedDates(DateRange range);
+    bool IsInRange(DateOnly value);
+    DateOnly[] AllowedDates(DateRange range);
 }

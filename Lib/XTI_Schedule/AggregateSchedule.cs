@@ -23,8 +23,8 @@ public sealed class AggregateSchedule
         return schedules.Any(s => s.IsInSchedule(dateTime));
     }
 
-    public DateTimeRange[] DateTimeRanges(DateRange dateRange)
-        => schedules
+    public DateTimeRange[] DateTimeRanges(DateRange dateRange) => 
+        schedules
             .SelectMany(s => s.DateTimeRanges(dateRange))
             .OrderBy(dr => dr)
             .Distinct()
