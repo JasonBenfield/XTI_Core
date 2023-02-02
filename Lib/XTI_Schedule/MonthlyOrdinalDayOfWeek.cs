@@ -11,20 +11,16 @@ public struct MonthlyOrdinalDayOfWeek
     public OrdinalWeek Week { get; }
     public DayOfWeek DayOfWeek { get; }
 
-    public DateTime ToDate(DateTime dateTime)
+    public DateOnly ToDate(DateOnly dateTime)
     {
         if (Week == OrdinalWeek.None)
         {
             throw new ArgumentException("Week cannot be None");
         }
-        if (DayOfWeek == 0)
-        {
-            throw new ArgumentException("Day of Week cannot be None");
-        }
-        DateTime date;
+        DateOnly date;
         if (Week == OrdinalWeek.Last)
         {
-            var endOfMonth = new DateTime(dateTime.Year, dateTime.Month, 1)
+            var endOfMonth = new DateOnly(dateTime.Year, dateTime.Month, 1)
                 .AddMonths(1)
                 .AddDays(-1);
             var current = endOfMonth;
@@ -36,7 +32,7 @@ public struct MonthlyOrdinalDayOfWeek
         }
         else
         {
-            var firstOfMonth = new DateTime(dateTime.Year, dateTime.Month, 1);
+            var firstOfMonth = new DateOnly(dateTime.Year, dateTime.Month, 1);
             var current = firstOfMonth;
             while (current.DayOfWeek != DayOfWeek)
             {

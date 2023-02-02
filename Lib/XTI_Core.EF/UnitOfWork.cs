@@ -60,4 +60,28 @@ public sealed class UnitOfWork
             }
         }
     }
+
+    public async Task<T> Execute<T>(Func<Task<T>> action)
+    {
+        T result;
+        if (IsInProgress())
+        {
+            result = await action();
+        }
+        else
+        {
+            await BeginTransaction();
+            try
+            {
+                result = await action();
+                await Commit();
+            }
+            catch
+            {
+                await Rollback();
+                throw;
+            }
+        }
+        return result;
+    }
 }

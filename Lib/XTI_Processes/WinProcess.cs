@@ -5,13 +5,13 @@ namespace XTI_Processes;
 public sealed class WinProcess : IProcess
 {
     private readonly string fileName;
-    private readonly List<string> args = new List<string>();
+    private readonly List<string> args = new();
 
     private string nameDelimiter = "";
     private string valueDelimiter = " ";
 
-    private readonly List<string> outputLines = new List<string>();
-    private readonly List<string> errorLines = new List<string>();
+    private readonly List<string> outputLines = new();
+    private readonly List<string> errorLines = new();
 
     private bool outputToConsole = false;
     private string workingDirectory = "";
@@ -22,6 +22,7 @@ public sealed class WinProcess : IProcess
     }
 
     public event EventHandler<DataReceivedEventArgs>? OutputDataReceived;
+
     public event EventHandler<DataReceivedEventArgs>? ErrorDataReceived;
 
     public WinProcess UseArgumentNameDelimiter(string nameDelimiter)

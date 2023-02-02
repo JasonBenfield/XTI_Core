@@ -7,6 +7,11 @@ public class TextValue : SemanticType<string>
     {
     }
 
+    protected TextValue((string Value, string DisplayText) textValue)
+        : this(textValue.Value, textValue.DisplayText)
+    {
+    }
+
     public TextValue(string value, string displayText)
         : base(value, displayText)
     {

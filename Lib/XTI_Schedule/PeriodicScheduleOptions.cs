@@ -6,7 +6,7 @@ public sealed class PeriodicScheduleOptions
 
     public int Frequency { get; set; }
     public DateInterval Interval { get; set; }
-    public DateTime StartDate { get; set; }
+    public DateOnly StartDate { get; set; }
     public TimeRangeOptions[] TimeRanges
     {
         get => timeRanges;
@@ -17,6 +17,6 @@ public sealed class PeriodicScheduleOptions
         => new Schedule
         (
             new PeriodicSchedule(Frequency, Interval, StartDate),
-            (TimeRanges ?? new TimeRangeOptions[] { }).Select(tr => tr.ToTimeRange()).ToArray()
+            (TimeRanges ?? new TimeRangeOptions[0]).Select(tr => tr.ToTimeRange()).ToArray()
         );
 }

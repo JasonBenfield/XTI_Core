@@ -38,11 +38,11 @@ public sealed class ScheduleBuilder
 
 public sealed class NextScheduleBuilder
 {
-    private readonly List<IDaySchedule> daySchedules = new List<IDaySchedule>();
+    private readonly List<IDaySchedule> daySchedules = new();
 
     public NextScheduleBuilder(params IDaySchedule[] daySchedules)
     {
-        this.daySchedules.AddRange(daySchedules ?? new IDaySchedule[] { });
+        this.daySchedules.AddRange(daySchedules ?? new IDaySchedule[0]);
     }
 
     public NextScheduleBuilder AndOn(params DayOfWeek[] daysOfWeek)
@@ -80,6 +80,6 @@ public sealed class NextScheduleBuilder
         return this;
     }
 
-    public Schedule At(params TimeRange[] timeRanges)
-        => new Schedule(daySchedules.ToArray(), timeRanges);
+    public Schedule At(params TimeRange[] timeRanges) => 
+        new Schedule(daySchedules.ToArray(), timeRanges);
 }

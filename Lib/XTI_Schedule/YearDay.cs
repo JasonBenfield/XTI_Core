@@ -31,7 +31,7 @@ public partial struct YearDay
     public int Month { get; }
     public int Day { get; }
 
-    public DateTime ToDate(DateTimeOffset value) => new DateTime(value.Year, Month, Day);
+    public DateOnly WithYear(int year) => new DateOnly(year, Month, Day);
 
     public string Format() => $"{Month}/{Day}";
 

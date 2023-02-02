@@ -70,21 +70,21 @@ sealed class YearlyOrdinalScheduleTest
             (
                 new[]
                 {
-                        DateTimeRange.Between
-                        (
-                            new DateTime(2021, 6, 16, 21, 0, 0),
-                            new DateTime(2021, 6, 16, 22, 0, 0)
-                        ),
-                        DateTimeRange.Between
-                        (
-                            new DateTime(2021, 10, 30, 21, 0, 0),
-                            new DateTime(2021, 10, 30, 22, 0, 0)
-                        ),
-                        DateTimeRange.Between
-                        (
-                            new DateTime(2022, 1, 3, 21, 0, 0),
-                            new DateTime(2022, 1, 3, 22, 0, 0)
-                        )
+                    DateTimeRange.Between
+                    (
+                        new DateTime(2021, 6, 16, 21, 0, 0),
+                        new DateTime(2021, 6, 16, 22, 0, 0)
+                    ),
+                    DateTimeRange.Between
+                    (
+                        new DateTime(2021, 10, 30, 21, 0, 0),
+                        new DateTime(2021, 10, 30, 22, 0, 0)
+                    ),
+                    DateTimeRange.Between
+                    (
+                        new DateTime(2022, 1, 3, 21, 0, 0),
+                        new DateTime(2022, 1, 3, 22, 0, 0)
+                    )
                 }
             ),
             "Should get allowed date time ranges"

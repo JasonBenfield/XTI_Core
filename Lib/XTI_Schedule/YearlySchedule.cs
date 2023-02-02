@@ -1,4 +1,5 @@
-﻿using XTI_Core;
+﻿using System.Net.Http.Headers;
+using XTI_Core;
 
 namespace XTI_Schedule;
 
@@ -11,10 +12,12 @@ public sealed class YearlySchedule : IDaySchedule
 
     internal YearDay[] Days { get; }
 
-    public bool IsInRange(DateTimeOffset value) =>
-        Days.Any(d => d.ToDate(value) == value.Date);
+    public bool IsInRange(DateOnly value) =>
+        Days.Any(d => d.WithYear(value.Year) == value);
 
-    public DateTime[] AllowedDates(DateRange range) =>
-        range.Dates().Where(d => IsInRange(d)).ToArray();
+    public DateOnly[] AllowedDates(DateRange range) =>
+        range.Dates()
+            .Where(d => IsInRange(d))
+            .ToArray();
 
 }

@@ -24,8 +24,8 @@ public sealed partial class CamelCasedWord : IEquatable<CamelCasedWord>, IEquata
 
     public string Format() => string.Join(" ", Words());
 
-    public IEnumerable<string> Words()
-        => CamelCasedRegex()
+    public IEnumerable<string> Words() =>
+        CamelCasedRegex()
             .Matches(word)
             .SelectMany(m => m.Captures)
             .Select((c, i) => i == 0 && isFirstWordLower ? c.Value.ToLower() : c.Value);
@@ -48,6 +48,6 @@ public sealed partial class CamelCasedWord : IEquatable<CamelCasedWord>, IEquata
 
     public override string ToString() => $"{nameof(CamelCasedWord)} {word}";
 
-    [GeneratedRegex("(([A-Z]{2,})(?![a-z]+))|(([A-Z]{2,})(([a-z]+)))|([A-Z]{1}[a-z]+)|(\\d+)")]
+    [GeneratedRegex("\\[?(([A-Z]{2,})(?![a-z]+))\\]?|\\[?(([A-Z]{2,})(([a-z]+)))\\]?|\\[?([A-Z]{1}[a-z]+)\\]?|\\[?(\\d+)\\]?|\\[?([a-z]+)\\]?")]
     private static partial Regex CamelCasedRegex();
 }

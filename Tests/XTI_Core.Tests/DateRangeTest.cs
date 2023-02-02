@@ -70,7 +70,7 @@ public sealed class DateRangeTest
     [Test]
     public void ShouldGetDatesInRange()
     {
-        var dateRange = DateRange.Between(new DateTime(2021, 9, 29), new DateTime(2021, 10, 2));
+        var dateRange = DateRange.Between(new DateOnly(2021, 9, 29), new DateOnly(2021, 10, 2));
         var dates = dateRange.Dates();
         Assert.That
         (
@@ -79,12 +79,26 @@ public sealed class DateRangeTest
             (
                 new[]
                 {
-                    new DateTime(2021, 9, 29),
-                    new DateTime(2021, 9, 30),
-                    new DateTime(2021, 10, 1),
-                    new DateTime(2021, 10, 2)
+                    new DateOnly(2021, 9, 29),
+                    new DateOnly(2021, 9, 30),
+                    new DateOnly(2021, 10, 1),
+                    new DateOnly(2021, 10, 2)
                 }
             )
         );
     }
+
+    [Test]
+    public void ShouldDeserializeDateRange()
+    {
+        var start = new DateOnly(2021, 9, 29);
+        var end = new DateOnly(2021, 10, 2);
+        var dateRange = DateRange.Between(start, end);
+        var serialized = XtiSerializer.Serialize(dateRange);
+        Console.WriteLine($"Serialized Date Range: {serialized}");
+        var deserialized = XtiSerializer.Deserialize(serialized, DateRange.All);
+        Assert.That(deserialized.Start, Is.EqualTo(start));
+        Assert.That(deserialized.End, Is.EqualTo(end));
+    }
+
 }

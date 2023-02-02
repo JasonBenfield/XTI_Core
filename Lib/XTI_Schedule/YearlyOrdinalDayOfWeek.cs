@@ -7,18 +7,18 @@ public struct YearlyOrdinalDayOfWeek
     public YearlyOrdinalDayOfWeek(OrdinalWeek week, DayOfWeek day, params Months[] months)
     {
         ordinal = new MonthlyOrdinalDayOfWeek(week, day);
-        Months = months ?? new Months[] { };
+        Months = months ?? new Months[0];
     }
 
     public OrdinalWeek Week { get => ordinal.Week; }
     public DayOfWeek DayOfWeek { get => ordinal.DayOfWeek; }
     public Months[] Months { get; }
 
-    public DateTime[] ToDates(DateTime dateTime)
+    public DateOnly[] ToDates(DateOnly dateTime)
     {
         var o = ordinal;
         return Months
-            .Select(m => new DateTime(dateTime.Year, (int)m, 1))
+            .Select(m => new DateOnly(dateTime.Year, (int)m, 1))
             .Select(d => o.ToDate(d))
             .ToArray();
     }

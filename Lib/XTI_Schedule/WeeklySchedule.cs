@@ -40,13 +40,10 @@ public sealed class WeeklySchedule : IDaySchedule
 
     internal DayOfWeek[] Days { get; }
 
-    public bool IsInRange(DateTimeOffset value)
-    {
-        value = value.ToLocalTime();
-        return Days.Any(d => value.DayOfWeek == d);
-    }
+    public bool IsInRange(DateOnly value) =>
+        Days.Any(d => value.DayOfWeek == d);
 
-    public DateTime[] AllowedDates(DateRange range)
+    public DateOnly[] AllowedDates(DateRange range)
         => range.Dates()
             .Where(d => IsInRange(d))
             .ToArray();

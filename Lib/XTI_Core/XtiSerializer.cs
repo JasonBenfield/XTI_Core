@@ -15,6 +15,9 @@ public static class XtiSerializer
     public static T Deserialize<T>(string str, Func<T> ifnull, JsonSerializerOptions? options = null) =>
         JsonSerializer.Deserialize<T>(str, options ?? DefaultOptions()) ?? ifnull();
 
+    public static T[] DeserializeArray<T>(string str, JsonSerializerOptions? options = null) =>
+        JsonSerializer.Deserialize<T[]>(str, options ?? DefaultOptions()) ?? new T[0];
+
     private static JsonSerializerOptions DefaultOptions() =>
         new JsonSerializerOptions().AddCoreConverters();
 
@@ -22,6 +25,10 @@ public static class XtiSerializer
     {
         options.AddConverter<NullStringAsEmptyJsonConverter>();
         options.AddConverter<NumericValueJsonConverterFactory>();
+        options.AddConverter<TimeOnlyJsonConverter>();
+        options.AddConverter<DateOnlyJsonConverter>();
+        options.AddConverter<TimeRangeJsonConverter>();
+        options.AddConverter<DateRangeJsonConverter>();
         options.AddConverter<TextValueJsonConverterFactory>();
         options.AddConverter<TimeSpanJsonConverter>();
         options.AddConverter<DictionaryStringObjectJsonConverter>();

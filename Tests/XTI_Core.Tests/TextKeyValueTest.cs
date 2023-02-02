@@ -14,6 +14,24 @@ public sealed class TextKeyValueTest
     }
 
     [Test]
+    public void ShouldIncludeBracketsInDisplayText()
+    {
+        var key = TestKey.ParseDisplayText("[OnDemand] DoSomething");
+        Assert.That(key.DisplayText, Is.EqualTo("[On Demand] Do Something"), "Should include brackets in display text");
+        key = TestKey.ParseDisplayText("[ondemand] DoSomething");
+        Assert.That(key.DisplayText, Is.EqualTo("[ondemand] Do Something"), "Should include brackets in display text");
+    }
+
+    [Test]
+    public void ShouldIncludeBracketsInValue()
+    {
+        var key = TestKey.ParseDisplayText("[OnDemand] DoSomething");
+        Assert.That(key.Value, Is.EqualTo("[on_demand]_do_something"), "Should include brackets in value");
+        key = TestKey.ParseDisplayText("[ondemand] DoSomething");
+        Assert.That(key.Value, Is.EqualTo("[ondemand]_do_something"), "Should include brackets in value");
+    }
+
+    [Test]
     public void ShouldParseAsMultipleCapitalizedWords()
     {
         var key = TestKey.Parse("one_two");
@@ -127,13 +145,15 @@ public sealed class TextKeyValueTest
     {
         var key = new AnotherTestValue(23);
         var serialized = XtiSerializer.Serialize(key);
-        var deserialized = XtiSerializer.Deserialize(serialized, ()=>new AnotherTestValue(0));
+        var deserialized = XtiSerializer.Deserialize(serialized, () => new AnotherTestValue(0));
         Assert.That(deserialized, Is.EqualTo(key));
     }
 
     public sealed class TestKey : TextKeyValue, IEquatable<TestKey>
     {
-        public static TestKey Parse(string value) => new TestKey(value, "");
+        public static TestKey ParseDisplayText(string value) => new(value);
+
+        public static TestKey Parse(string value) => new(value, "");
 
         public TestKey(string value) : base(value)
         {
