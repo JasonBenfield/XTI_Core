@@ -75,6 +75,35 @@ internal sealed class AggregateScheduleTest
     }
 
     [Test]
+    public void ShouldGetTimeRangesWithMultipleDayRangesAndTimeRanges()
+    {
+        var schedule = new AggregateSchedule
+        (
+            Schedule.EveryDay().At(TimeRange.From(new TimeOnly(11, 30)).ForOneHour()),
+            Schedule.On(DayOfWeek.Thursday).At
+            (
+                TimeRange.From(new TimeOnly(8, 0)).ForOneHour(),
+                TimeRange.From(new TimeOnly(14, 0)).ForOneHour()
+            )
+        );
+        var dateTimeRanges = schedule.DateTimeRanges(DateRange.From(new DateOnly(2023, 2, 1)).Until(new DateOnly(2023, 2, 2)));
+        Assert.That
+        (
+            dateTimeRanges,
+            Is.EquivalentTo
+            (
+                new[]
+                {
+                    DateTimeRange.From(new DateTime(2023, 2, 1, 11, 30, 0)).Until(new DateTime(2023, 2, 1, 12, 30, 0)),
+                    DateTimeRange.From(new DateTime(2023, 2, 2, 8, 0, 0)).Until(new DateTime(2023, 2, 2, 9, 0, 0)),
+                    DateTimeRange.From(new DateTime(2023, 2, 2, 11, 30, 0)).Until(new DateTime(2023, 2, 2, 12, 30, 0)),
+                    DateTimeRange.From(new DateTime(2023, 2, 2, 14, 0, 0)).Until(new DateTime(2023, 2, 2, 15, 0, 0))
+                }
+            )
+        );
+    }
+
+        [Test]
     public void ShouldDeserializeSchedule()
     {
         var schedule = new AggregateSchedule
@@ -162,7 +191,7 @@ internal sealed class AggregateScheduleTest
     [Test]
     public void ShouldParseAppSettingsForWeeklySchedules()
     {
-        var services = setup
+        var services = Setup
         (
             new[]
             {
@@ -187,7 +216,7 @@ internal sealed class AggregateScheduleTest
     [Test]
     public void ShouldParseAppSettingsForMonthlySchedules()
     {
-        var services = setup
+        var services = Setup
         (
             new[]
             {
@@ -211,7 +240,7 @@ internal sealed class AggregateScheduleTest
     [Test]
     public void ShouldParseAppSettingsForMonthlyOrdinalSchedules()
     {
-        var services = setup
+        var services = Setup
         (
             new[]
             {
@@ -234,7 +263,7 @@ internal sealed class AggregateScheduleTest
     [Test]
     public void ShouldParseAppSettingsForPeriodicSchedules()
     {
-        var services = setup
+        var services = Setup
         (
             new[]
             {
@@ -258,7 +287,7 @@ internal sealed class AggregateScheduleTest
     [Test]
     public void ShouldParseAppSettingsForYearlySchedules()
     {
-        var services = setup
+        var services = Setup
         (
             new[]
             {
@@ -286,7 +315,7 @@ internal sealed class AggregateScheduleTest
     [Test]
     public void ShouldParseAppSettingsForYearlyOrdinalSchedules()
     {
-        var services = setup
+        var services = Setup
         (
             new[]
             {
@@ -313,7 +342,7 @@ internal sealed class AggregateScheduleTest
         Assert.That(options.YearlyOrdinalSchedules[0].TimeRanges[0].Duration, Is.EqualTo(new TimeSpan(2, 30, 0)));
     }
 
-    private IServiceProvider setup(KeyValuePair<string, string>[] settings)
+    private IServiceProvider Setup(KeyValuePair<string, string>[] settings)
     {
         var builder = new XtiHostBuilder();
         builder.Configuration.AddInMemoryCollection(settings);

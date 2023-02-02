@@ -18,7 +18,7 @@ public partial class TextKeyValue : TextValue
 
     private static string normalizeDisplayText(string displayText)
     {
-        var source = 
+        var source =
             SeparatorRegex().IsMatch(displayText)
                 ? SeparatorRegex().Replace(displayText, " ")
                 : displayText;
@@ -36,7 +36,7 @@ public partial class TextKeyValue : TextValue
     }
 
     protected TextKeyValue(string value, string displayText)
-        : base(value, displayText)
+        : base(normalizeValue(value), displayText)
     {
         if (string.IsNullOrWhiteSpace(displayText))
         {
@@ -63,7 +63,7 @@ public partial class TextKeyValue : TextValue
         return normalized;
     }
 
-    private static string displayTextFromValue(string value) => 
+    private static string displayTextFromValue(string value) =>
         string.Join
         (
             ' ',

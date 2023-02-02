@@ -20,6 +20,26 @@ sealed class WeeklyScheduleTest
     }
 
     [Test]
+    public void ShouldBeInRangeWithMultipleTimeRanges()
+    {
+        var schedule = Schedule
+            .On(DayOfWeek.Monday)
+            .At(TimeRange.From(10, 13).ForOneHour(), TimeRange.From(14, 13).ForOneHour());
+        Assert.That
+        (
+            schedule.IsInSchedule(new DateTime(2021, 10, 4, 10, 45, 0)),
+            Is.True,
+            "Should be in range with multiple time ranges"
+        );
+        Assert.That
+        (
+            schedule.IsInSchedule(new DateTime(2021, 10, 4, 14, 45, 0)),
+            Is.True,
+            "Should be in range with multiple time ranges"
+        );
+    }
+
+    [Test]
     public void ShouldNotBeInRange_WhenDateIsNotOnAllowedDayButTimeIsWithinTheTimeRange()
     {
         var schedule = Schedule
