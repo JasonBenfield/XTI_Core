@@ -20,6 +20,20 @@ sealed class WeeklyScheduleTest
     }
 
     [Test]
+    public void ShouldBeInRangeForWeekdays_WhenDateIsOnAllowedDayAndTimeIsWithinTheTimeRange()
+    {
+        var schedule = Schedule
+            .Weekdays()
+            .At(TimeRange.From(new TimeOnly(17, 45)).ForOneHour());
+        Assert.That
+        (
+            schedule.IsInSchedule(new DateTime(2023, 6, 22, 17, 50, 0)),
+            Is.True,
+            "Should be in range when date is on an allowed day and time is within the range"
+        );
+    }
+
+    [Test]
     public void ShouldBeInRangeWithMultipleTimeRanges()
     {
         var schedule = Schedule

@@ -21,27 +21,40 @@ public sealed class RobocopyProcess
         return this;
     }
 
-    public RobocopyProcess CopySubdirectoriesIncludingEmpty() => addOption("e");
+    public RobocopyProcess CopySubdirectoriesIncludingEmpty() => AddOption("e");
 
-    public RobocopyProcess Purge() => addOption("purge");
+    public RobocopyProcess Purge() => AddOption("purge");
 
-    public RobocopyProcess NoJobHeader() => addOption("njh");
+    public RobocopyProcess NoJobHeader() => AddOption("njh");
 
-    public RobocopyProcess NoJobSummary() => addOption("njs");
+    public RobocopyProcess NoJobSummary() => AddOption("njs");
 
-    public RobocopyProcess NoDirectoryLogging() => addOption("ndl");
+    public RobocopyProcess NoDirectoryLogging() => AddOption("ndl");
 
-    public RobocopyProcess NoFileLogging() => addOption("nfl");
+    public RobocopyProcess NoFileLogging() => AddOption("nfl");
 
-    public RobocopyProcess NoFileSizeLogging() => addOption("ns");
+    public RobocopyProcess NoFileSizeLogging() => AddOption("ns");
 
-    public RobocopyProcess NoFileClassLogging() => addOption("nc");
+    public RobocopyProcess NoFileClassLogging() => AddOption("nc");
 
-    public RobocopyProcess NoProgressDisplayed() => addOption("np");
+    public RobocopyProcess NoProgressDisplayed() => AddOption("np");
 
-    public RobocopyProcess MoveFiles() => addOption("mov");
+    public RobocopyProcess MoveFiles() => AddOption("mov");
 
-    public RobocopyProcess MoveFilesAndDirectories() => addOption("move");
+    public RobocopyProcess MoveFilesAndDirectories() => AddOption("move");
+
+    public RobocopyProcess Unbuffered() => AddOption("J");
+
+    public RobocopyProcess NoOffload() => AddOption("NOOFFLOAD");
+
+    public RobocopyProcess NumberOfRetries(int numberOfRetries) =>
+        AddOption(new WinArgument("/", "R", ":", numberOfRetries.ToString()));
+
+    public RobocopyProcess WaitTimeBetweenRetries(int waitTimeInSeconds) =>
+        AddOption(new WinArgument("/", "W", ":", waitTimeInSeconds.ToString()));
+
+    public RobocopyProcess MultiThreaded(int numberOfThreads) =>
+        AddOption(new WinArgument("/", "MT", ":", numberOfThreads.ToString()));
 
     public RobocopyProcess AddReadonlyAttributeToTarget()
     {
@@ -49,10 +62,10 @@ public sealed class RobocopyProcess
         return this;
     }
 
-    private RobocopyProcess addOption(string name)
-        => addOption(new WinArgument("/", name, "", ""));
+    private RobocopyProcess AddOption(string name) => 
+        AddOption(new WinArgument("/", name, "", ""));
 
-    private RobocopyProcess addOption(WinArgument arg)
+    private RobocopyProcess AddOption(WinArgument arg)
     {
         options.Add(arg);
         return this;
@@ -72,7 +85,19 @@ public sealed class RobocopyProcess
         return this;
     }
 
+    public string CommandText() => CreateProcess().CommandText();
+
     public async Task Run()
+    {
+        var process = CreateProcess();
+        var result = await process.Run();
+        if (result.ExitCode >= 8)
+        {
+            throw new Exception($"robocopy failed with exit code {result.ExitCode}");
+        }
+    }
+
+    private WinProcess CreateProcess()
     {
         var process = new WinProcess("robocopy");
         if (outputToConsole)
@@ -95,10 +120,6 @@ public sealed class RobocopyProcess
         {
             process.AddArgument("a+", string.Join("", attributesToAdd));
         }
-        var result = await process.Run();
-        if (result.ExitCode >= 8)
-        {
-            throw new Exception($"robocopy failed with exit code {result.ExitCode}");
-        }
+        return process;
     }
 }
