@@ -23,8 +23,8 @@ internal sealed class NumericValueTest
     {
         Assert.That
         (
-            EmployeeType.Values.FullTime.DisplayText, 
-            Is.EqualTo("Full Time"), 
+            EmployeeType.Values.FullTime.DisplayText,
+            Is.EqualTo("Full Time"),
             "Should format camel cased words"
         );
     }
@@ -59,15 +59,54 @@ internal sealed class NumericValueTest
             EmployeeType.Values.GetAll(),
             Is.EquivalentTo
             (
-                new[] 
-                { 
-                    EmployeeType.Values.None, 
-                    EmployeeType.Values.Temp, 
+                new[]
+                {
+                    EmployeeType.Values.None,
+                    EmployeeType.Values.Temp,
                     EmployeeType.Values.Permanent,
                     EmployeeType.Values.FullTime
                 }
             ),
             "Should get all values"
         );
+    }
+
+    [Test]
+    public void ShouldOverrideDefaultFormat()
+    {
+        Assert.That
+        (
+            TestNumericValue.Values.Test01.DisplayText,
+            Is.EqualTo("TestNumericValue"),
+            "Should override default display text formatting"
+        );
+    }
+
+    private sealed class TestNumericValue : NumericValue, IEquatable<TestNumericValue>
+    {
+        public sealed class TestNumericValues : NumericValues<TestNumericValue>
+        {
+            public TestNumericValues()
+                : base(new TestNumericValue(0, "Not Set"))
+            {
+                NotSet = DefaultValue;
+                Test01 = Add(100, "TestNumericValue");
+            }
+
+            private TestNumericValue Add(int value, string displayText) =>
+                Add(new(value, displayText));
+
+            public TestNumericValue NotSet { get; }
+            public TestNumericValue Test01 { get; }
+        }
+
+        public static readonly TestNumericValues Values = new();
+
+        private TestNumericValue(int value, string displayText)
+            : base(value, displayText, (_, v) => v)
+        {
+        }
+
+        public bool Equals(TestNumericValue? other) => _Equals(other);
     }
 }

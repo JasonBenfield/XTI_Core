@@ -68,6 +68,6 @@ public abstract class SemanticType<T> : IEquatable<T>
     protected bool _Equals(SemanticType<T>? other)
     {
         if (other == null) { return false; }
-        return Equals(Value, other.Value);
+        return _Equals(other.Value);
     }
 }
