@@ -12,7 +12,7 @@ public sealed class XtiConfiguration : IXtiConfiguration
 
     public IConfiguration Source { get; }
 
-    public string this[string key] { get => Source[key]; set => Source[key] = value; }
+    public string this[string key] { get => Source[key] ?? ""; set => Source[key] = value ?? ""; }
 
     public IEnumerable<IConfigurationSection> GetChildren() => Source.GetChildren();
 
