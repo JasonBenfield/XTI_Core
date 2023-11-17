@@ -7,6 +7,7 @@ public sealed class DbOptions
     private string source = "";
     private string userName = "";
     private string password = "";
+    private string qualifier = "";
     private string trustServerCertificate = "Yes";
 
     public string Source
@@ -27,9 +28,17 @@ public sealed class DbOptions
         set => password = value ?? "";
     }
 
+    public string Qualifier
+    {
+        get => qualifier;
+        set => qualifier = value ?? "";
+    }
+
     public string TrustServerCertificate
     {
         get => trustServerCertificate;
         set => trustServerCertificate = value ?? "";
     }
+
+    public bool IsAlwaysEncryptedEnabled { get; set; }
 }

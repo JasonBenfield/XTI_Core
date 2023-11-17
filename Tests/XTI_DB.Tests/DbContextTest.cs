@@ -48,8 +48,14 @@ internal sealed class DbContextTest
         {
             var xtiEnv = sp.GetRequiredService<XtiEnvironment>();
             var dbOptions = sp.GetRequiredService<DbOptions>();
-            var connectionString = new XtiConnectionString(dbOptions, new XtiDbName(xtiEnv.EnvironmentName, "Hub"));
-            options.UseSqlServer(connectionString.Value());
+            dbOptions.IsAlwaysEncryptedEnabled = true;
+            var connectionString = new XtiConnectionString
+            (
+                dbOptions, 
+                new XtiDbName(xtiEnv.EnvironmentName, "Hub")
+            );
+            var connectionStringValue = connectionString.Value();
+            options.UseSqlServer(connectionStringValue);
             if (xtiEnv.IsDevelopmentOrTest())
             {
                 options.EnableSensitiveDataLogging();

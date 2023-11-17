@@ -22,6 +22,10 @@ public sealed class XtiConnectionString
         {
             connStr.Add("TrustServerCertificate", "Yes");
         }
+        if (options.IsAlwaysEncryptedEnabled)
+        {
+            connStr.Add("Column Encryption Setting", "enabled");
+        }
         value = string.Join(";", connStr.Keys.Select(key => $"{key}={connStr[key]}"));
     }
 

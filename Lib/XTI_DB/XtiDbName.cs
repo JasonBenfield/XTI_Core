@@ -3,8 +3,14 @@
 public sealed class XtiDbName
 {
     public XtiDbName(string environmentName, string dbName)
+        : this(environmentName, dbName, "")
     {
-        Value = $"XTI_{environmentName}_{dbName}";
+    }
+
+    public XtiDbName(string environmentName, string dbName, string qualifier)
+    {
+        var qualifierValue = string.IsNullOrWhiteSpace(qualifier) ? "" : $"_{qualifier}";
+        Value = $"XTI_{environmentName}{qualifierValue}_{dbName}";
     }
 
     public string Value { get; }
