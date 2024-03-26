@@ -1,4 +1,6 @@
-﻿namespace XTI_DB;
+﻿using XTI_Core;
+
+namespace XTI_DB;
 
 public sealed class XtiConnectionString
 {

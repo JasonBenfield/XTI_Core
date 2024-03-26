@@ -16,6 +16,28 @@ internal sealed class DbContextTest
         apps.WriteToConsole();
     }
 
+    [Test]
+    public async Task ShouldBackupDB()
+    {
+        var sp = Setup("Development");
+        var dbAdmin = sp.GetRequiredService<DbAdmin<TestDbContext>>();
+        var filePath = @"c:\xti\test_db_backup.bak";
+        if (File.Exists(filePath))
+        {
+            File.Delete(filePath);
+        }
+        await dbAdmin.BackupTo(filePath);
+    }
+
+    [Test]
+    public async Task ShouldRestoreDB()
+    {
+        var sp = Setup("Test");
+        var dbAdmin = sp.GetRequiredService<DbAdmin<TestDbContext>>();
+        var filePath = @"c:\xti\test_db_backup.bak";
+        await dbAdmin.RestoreFrom(filePath);
+    }
+
     private sealed class TestDbContext : DbContext
     {
         public TestDbContext(DbContextOptions options) : base(options)
@@ -44,7 +66,7 @@ internal sealed class DbContextTest
     {
         var hostBuilder = new XtiHostBuilder(XtiEnvironment.Parse(envName));
         hostBuilder.Services.AddConfigurationOptions<DbOptions>(DbOptions.DB);
-        hostBuilder.Services.AddDbContext<TestDbContext>((sp, options) =>
+        hostBuilder.Services.AddDbContextFactory<TestDbContext>((sp, options) =>
         {
             var xtiEnv = sp.GetRequiredService<XtiEnvironment>();
             var dbOptions = sp.GetRequiredService<DbOptions>();
@@ -54,6 +76,7 @@ internal sealed class DbContextTest
                 dbOptions, 
                 new XtiDbName(xtiEnv.EnvironmentName, "Hub")
             );
+            options.LogTo(Console.WriteLine);
             var connectionStringValue = connectionString.Value();
             options.UseSqlServer(connectionStringValue);
             if (xtiEnv.IsDevelopmentOrTest())
@@ -65,6 +88,7 @@ internal sealed class DbContextTest
                 options.EnableSensitiveDataLogging(false);
             }
         });
+        hostBuilder.Services.AddScoped(sp => new DbAdmin<TestDbContext>(sp.GetRequiredService<IDbContextFactory<TestDbContext>>()));
         var host = hostBuilder.Build();
         return host.Scope();
     }

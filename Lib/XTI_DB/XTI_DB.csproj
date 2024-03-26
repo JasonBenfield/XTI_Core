@@ -10,4 +10,8 @@
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="8.0.0" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <ProjectReference Include="..\XTI_Core\XTI_Core.csproj" />
+	</ItemGroup>
+
 </Project>

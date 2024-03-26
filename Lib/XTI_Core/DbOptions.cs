@@ -1,4 +1,4 @@
-﻿namespace XTI_DB;
+﻿namespace XTI_Core;
 
 public sealed class DbOptions
 {
