@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using NUnit.Framework;
 using XTI_Core.Extensions;
 using XTI_Schedule;
 
@@ -103,7 +102,7 @@ internal sealed class AggregateScheduleTest
         );
     }
 
-        [Test]
+    [Test]
     public void ShouldDeserializeSchedule()
     {
         var schedule = new AggregateSchedule
@@ -193,13 +192,12 @@ internal sealed class AggregateScheduleTest
     {
         var services = Setup
         (
-            new[]
-            {
-                    KeyValuePair.Create("WeeklySchedules:0:Days:0", "Monday"),
-                    KeyValuePair.Create("WeeklySchedules:0:Days:1", "Wednesday"),
-                    KeyValuePair.Create("WeeklySchedules:0:TimeRanges:0:Start", "10 AM"),
-                    KeyValuePair.Create("WeeklySchedules:0:TimeRanges:0:Duration", "2:30:00")
-            }
+            [
+                KeyValuePair.Create("WeeklySchedules:0:Days:0", "Monday"),
+                KeyValuePair.Create("WeeklySchedules:0:Days:1", "Wednesday"),
+                KeyValuePair.Create("WeeklySchedules:0:TimeRanges:0:Start", "10 AM"),
+                KeyValuePair.Create("WeeklySchedules:0:TimeRanges:0:Duration", "2:30:00")
+            ]
         );
         var options = services.GetRequiredService<ScheduleOptions>();
         Assert.That(options.WeeklySchedules.Length, Is.EqualTo(1));
@@ -218,13 +216,12 @@ internal sealed class AggregateScheduleTest
     {
         var services = Setup
         (
-            new[]
-            {
+            [
                 KeyValuePair.Create("MonthlySchedules:0:Days:0", "15"),
                 KeyValuePair.Create("MonthlySchedules:0:Days:1", "Last"),
                 KeyValuePair.Create("MonthlySchedules:0:TimeRanges:0:Start", "10 AM"),
                 KeyValuePair.Create("MonthlySchedules:0:TimeRanges:0:Duration", "2:30:00")
-            }
+            ]
         );
         var options = services.GetRequiredService<ScheduleOptions>();
         Assert.That
@@ -242,13 +239,12 @@ internal sealed class AggregateScheduleTest
     {
         var services = Setup
         (
-            new[]
-            {
-                    KeyValuePair.Create("MonthlyOrdinalSchedules:0:Days:0:Week", "Second"),
-                    KeyValuePair.Create("MonthlyOrdinalSchedules:0:Days:0:DayOfWeek", "Thursday"),
-                    KeyValuePair.Create("MonthlyOrdinalSchedules:0:TimeRanges:0:Start", "10 AM"),
-                    KeyValuePair.Create("MonthlyOrdinalSchedules:0:TimeRanges:0:Duration", "2:30:00")
-            }
+            [
+                KeyValuePair.Create("MonthlyOrdinalSchedules:0:Days:0:Week", "Second"),
+                KeyValuePair.Create("MonthlyOrdinalSchedules:0:Days:0:DayOfWeek", "Thursday"),
+                KeyValuePair.Create("MonthlyOrdinalSchedules:0:TimeRanges:0:Start", "10 AM"),
+                KeyValuePair.Create("MonthlyOrdinalSchedules:0:TimeRanges:0:Duration", "2:30:00")
+            ]
         );
         var options = services.GetRequiredService<ScheduleOptions>();
         Assert.That(options.MonthlyOrdinalSchedules.Length, Is.EqualTo(1));
@@ -265,14 +261,13 @@ internal sealed class AggregateScheduleTest
     {
         var services = Setup
         (
-            new[]
-            {
+            [
                 KeyValuePair.Create("PeriodicSchedules:0:Frequency", "2"),
                 KeyValuePair.Create("PeriodicSchedules:0:Interval", "Weeks"),
                 KeyValuePair.Create("PeriodicSchedules:0:StartDate", "10/2/2021"),
                 KeyValuePair.Create("PeriodicSchedules:0:TimeRanges:0:Start", "10 AM"),
                 KeyValuePair.Create("PeriodicSchedules:0:TimeRanges:0:Duration", "2:30:00")
-            }
+            ]
         );
         var options = services.GetRequiredService<ScheduleOptions>();
         Assert.That(options.PeriodicSchedules.Length, Is.EqualTo(1));
@@ -289,13 +284,12 @@ internal sealed class AggregateScheduleTest
     {
         var services = Setup
         (
-            new[]
-            {
-                    KeyValuePair.Create("YearlySchedules:0:Days:0", "4/18"),
-                    KeyValuePair.Create("YearlySchedules:0:Days:1", "9/7"),
-                    KeyValuePair.Create("YearlySchedules:0:TimeRanges:0:Start", "10:00"),
-                    KeyValuePair.Create("YearlySchedules:0:TimeRanges:0:Duration", "2:30:00")
-            }
+            [
+                KeyValuePair.Create("YearlySchedules:0:Days:0", "4/18"),
+                KeyValuePair.Create("YearlySchedules:0:Days:1", "9/7"),
+                KeyValuePair.Create("YearlySchedules:0:TimeRanges:0:Start", "10:00"),
+                KeyValuePair.Create("YearlySchedules:0:TimeRanges:0:Duration", "2:30:00")
+            ]
         );
         var options = services.GetRequiredService<ScheduleOptions>();
         Assert.That(options.YearlySchedules.Length, Is.EqualTo(1));
@@ -317,15 +311,14 @@ internal sealed class AggregateScheduleTest
     {
         var services = Setup
         (
-            new[]
-            {
+            [
                 KeyValuePair.Create("YearlyOrdinalSchedules:0:Days:0:Week", "Second"),
                 KeyValuePair.Create("YearlyOrdinalSchedules:0:Days:0:DayOfWeek", "Thursday"),
                 KeyValuePair.Create("YearlyOrdinalSchedules:0:Days:0:Months:0", "March"),
                 KeyValuePair.Create("YearlyOrdinalSchedules:0:Days:0:Months:1", "May"),
                 KeyValuePair.Create("YearlyOrdinalSchedules:0:TimeRanges:0:Start", "10 AM"),
                 KeyValuePair.Create("YearlyOrdinalSchedules:0:TimeRanges:0:Duration", "2:30:00")
-            }
+            ]
         );
         var options = services.GetRequiredService<ScheduleOptions>();
         Assert.That(options.YearlyOrdinalSchedules.Length, Is.EqualTo(1));
@@ -345,7 +338,10 @@ internal sealed class AggregateScheduleTest
     private IServiceProvider Setup(KeyValuePair<string, string>[] settings)
     {
         var builder = new XtiHostBuilder();
-        builder.Configuration.AddInMemoryCollection(settings);
+        builder.Configuration.AddInMemoryCollection
+        (
+            settings.Select(kvp => new KeyValuePair<string, string?>(kvp.Key, kvp.Value))
+        );
         builder.Services.AddConfigurationOptions<ScheduleOptions>();
         return builder.Build().Scope();
     }

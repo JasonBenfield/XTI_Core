@@ -14,8 +14,9 @@ internal sealed class DbBackup
     public Task Run(string backupFilePath)
     {
         var dbName = dbContext.Database.GetDbConnection().Database;
-        FormattableString commandText =
-            $"BACKUP DATABASE {dbName} TO DISK = {backupFilePath}";
-        return dbContext.Database.ExecuteSqlInterpolatedAsync(commandText);
+        return dbContext.Database.ExecuteSqlInterpolatedAsync
+        (
+            $"backup database {dbName} TO DISK = {backupFilePath}"
+        );
     }
 }
