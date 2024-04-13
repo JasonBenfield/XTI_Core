@@ -5,18 +5,37 @@ namespace XTI_DB;
 public sealed class DbAdmin<TDbContext>
     where TDbContext : DbContext
 {
-    private readonly TDbContext db;
+    private readonly IDbContextFactory<TDbContext> dbFactory;
 
-    public DbAdmin(TDbContext db)
+    public DbAdmin(IDbContextFactory<TDbContext> dbFactory)
     {
-        this.db = db;
+        this.dbFactory = dbFactory;
     }
 
-    public Task BackupTo(string backupFilePath) => new DbBackup(db).Run(backupFilePath);
+    public async Task BackupTo(string backupFilePath)
+    {
+        using (var db = dbFactory.CreateDbContext())
+        {
+            await new DbBackup(dbFactory.CreateDbContext()).Run(backupFilePath);
+        }
+    }
 
-    public Task RestoreFrom(string backupFilePath) => new DbBackup(db).Run(backupFilePath);
+    public Task RestoreFrom(string backupFilePath) =>
+        new DbRestore<TDbContext>(dbFactory).Run(backupFilePath);
 
-    public Task Reset() => new DbReset(db).Run();
+    public async Task Reset()
+    {
+        using (var db = dbFactory.CreateDbContext())
+        {
+            await new DbReset(db).Run();
+        }
+    }
 
-    public Task Update() => db.Database.MigrateAsync();
+    public async Task Update()
+    {
+        using (var db = dbFactory.CreateDbContext())
+        {
+            await db.Database.MigrateAsync();
+        }
+    }
 }

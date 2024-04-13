@@ -6,7 +6,7 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{CE061E26-BD39-4AFA-9D78-46AE929D96FD}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
-		xti.ps1 = xti.ps1
+		LICENSE.md = LICENSE.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Lib", "Lib", "{58169265-EA3B-4D82-A72B-63942D7098E8}"
@@ -31,7 +31,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XTI_Processes", "Lib\XTI_Pr
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XTI_Tool", "Lib\XTI_Tool\XTI_Tool.csproj", "{7B17148D-0ABA-461A-9EA6-3BC45F880A06}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XTI_DB.Tests", "Tests\XTI_DB.Tests\XTI_DB.Tests.csproj", "{EA1A50D4-73B4-4E27-850D-F1A4E6EE70DA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XTI_DB.Tests", "Tests\XTI_DB.Tests\XTI_DB.Tests.csproj", "{EA1A50D4-73B4-4E27-850D-F1A4E6EE70DA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

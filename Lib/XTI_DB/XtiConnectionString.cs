@@ -1,4 +1,6 @@
-﻿namespace XTI_DB;
+﻿using XTI_Core;
+
+namespace XTI_DB;
 
 public sealed class XtiConnectionString
 {
@@ -21,6 +23,10 @@ public sealed class XtiConnectionString
         if (!string.IsNullOrWhiteSpace(options.TrustServerCertificate))
         {
             connStr.Add("TrustServerCertificate", "Yes");
+        }
+        if (options.IsAlwaysEncryptedEnabled)
+        {
+            connStr.Add("Column Encryption Setting", "enabled");
         }
         value = string.Join(";", connStr.Keys.Select(key => $"{key}={connStr[key]}"));
     }
