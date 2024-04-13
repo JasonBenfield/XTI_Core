@@ -7,9 +7,9 @@ public sealed class DbAdmin<TDbContext>
 {
     private readonly IDbContextFactory<TDbContext> dbFactory;
 
-    public DbAdmin(IDbContextFactory<TDbContext> db)
+    public DbAdmin(IDbContextFactory<TDbContext> dbFactory)
     {
-        this.dbFactory = db;
+        this.dbFactory = dbFactory;
     }
 
     public async Task BackupTo(string backupFilePath)
