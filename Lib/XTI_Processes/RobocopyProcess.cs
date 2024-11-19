@@ -107,7 +107,7 @@ public sealed class RobocopyProcess
         var result = await process.Run();
         if (throwExceptionOnErrorResult)
         {
-            result.EnsureExitCodeIsValid(code => code >= 8);
+            result.EnsureExitCodeIsValid(code => code >= 0 && code < 8);
         }
         return result;
     }
