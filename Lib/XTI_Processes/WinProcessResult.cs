@@ -33,7 +33,7 @@ public sealed partial record WinProcessResult(int ExitCode, string[] OutputLines
     {
         if (!isValid(ExitCode))
         {
-            throwException();
+            ThrowException();
         }
         return this;
     }
@@ -42,21 +42,12 @@ public sealed partial record WinProcessResult(int ExitCode, string[] OutputLines
     {
         if (ErrorLines.Length > 0)
         {
-            throwException();
+            ThrowException();
         }
         return this;
     }
 
-    private void throwException()
-    {
-        var message = $"Process failed with exit code {ExitCode}";
-        var joinedErrors = string.Join("\r\n", ErrorLines);
-        if (!string.IsNullOrWhiteSpace(joinedErrors))
-        {
-            message += $"\r\n{joinedErrors}";
-        }
-        throw new Exception(message);
-    }
+    private void ThrowException() => throw new WinProcessException(this);
 
     [GeneratedRegex("<data>(.*)<\\/data>")]
     private static partial Regex DataRegex();
