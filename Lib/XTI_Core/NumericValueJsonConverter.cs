@@ -27,7 +27,7 @@ public sealed class NumericValueJsonConverter<T> : JsonConverter<T>
             {
                 throw new ArgumentNullException($"Value method not found for {typeToConvert.Name}");
             }
-            var defaultValue = (T?)getDefaultMethod.Invoke(values, new object[0]);
+            var defaultValue = (T?)getDefaultMethod.Invoke(values, []);
             numericValue = defaultValue ?? throw new ArgumentNullException($"numeric value should not be null for  {typeToConvert.Name}");
         }
         else if (reader.TokenType == JsonTokenType.Number)
