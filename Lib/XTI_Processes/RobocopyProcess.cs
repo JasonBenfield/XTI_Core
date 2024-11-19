@@ -79,6 +79,20 @@ public sealed class RobocopyProcess
         return this;
     }
 
+    private bool throwExceptionOnErrorResult = true;
+
+    public RobocopyProcess ThrowExceptionOnErrorResult()
+    {
+        throwExceptionOnErrorResult = true;
+        return this;
+    }
+
+    public RobocopyProcess DontThrowExceptionOnErrorResult()
+    {
+        throwExceptionOnErrorResult = false;
+        return this;
+    }
+
     public RobocopyProcess SetWorkingDirectory(string workingDirectory)
     {
         this.workingDirectory = workingDirectory;
@@ -87,14 +101,15 @@ public sealed class RobocopyProcess
 
     public string CommandText() => CreateProcess().CommandText();
 
-    public async Task Run()
+    public async Task<WinProcessResult> Run()
     {
         var process = CreateProcess();
         var result = await process.Run();
-        if (result.ExitCode >= 8)
+        if (throwExceptionOnErrorResult)
         {
-            throw new Exception($"robocopy failed with exit code {result.ExitCode}");
+            result.EnsureExitCodeIsValid(code => code >= 8);
         }
+        return result;
     }
 
     private WinProcess CreateProcess()
