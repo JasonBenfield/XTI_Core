@@ -1,4 +1,4 @@
-﻿using NUnit.Framework;
+﻿using XTI_Core.Extensions;
 
 namespace XTI_Core.Tests;
 

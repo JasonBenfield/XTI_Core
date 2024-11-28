@@ -5,18 +5,18 @@ namespace XTI_Core;
 public partial class TextKeyValue : TextValue
 {
     protected TextKeyValue(string displayText)
-        : base(toTextValue(displayText))
+        : base(ToTextValue(displayText))
     {
     }
 
-    private static (string Value, string DisplayText) toTextValue(string displayText)
+    private static (string Value, string DisplayText) ToTextValue(string displayText)
     {
-        var normalizedDisplayText = normalizeDisplayText(displayText);
-        var normalizedValue = normalizeValue(normalizedDisplayText);
+        var normalizedDisplayText = NormalizeDisplayText(displayText);
+        var normalizedValue = NormalizeValue(normalizedDisplayText);
         return (normalizedValue, normalizedDisplayText);
     }
 
-    private static string normalizeDisplayText(string displayText)
+    private static string NormalizeDisplayText(string displayText)
     {
         var source =
             SeparatorRegex().IsMatch(displayText)
@@ -36,15 +36,15 @@ public partial class TextKeyValue : TextValue
     }
 
     protected TextKeyValue(string value, string displayText)
-        : base(normalizeValue(value), displayText)
+        : base(NormalizeValue(value), displayText)
     {
         if (string.IsNullOrWhiteSpace(displayText))
         {
-            DisplayText = displayTextFromValue(Value);
+            DisplayText = DisplayTextFromValue(Value);
         }
     }
 
-    private static string normalizeValue(string value)
+    private static string NormalizeValue(string value)
     {
         var normalized = value;
         if (SeparatorRegex().IsMatch(normalized))
@@ -63,7 +63,7 @@ public partial class TextKeyValue : TextValue
         return normalized;
     }
 
-    private static string displayTextFromValue(string value) =>
+    private static string DisplayTextFromValue(string value) =>
         string.Join
         (
             ' ',
@@ -73,7 +73,7 @@ public partial class TextKeyValue : TextValue
         );
 
     protected override bool _Equals(string? other) =>
-        base._Equals(normalizeValue(other ?? ""));
+        base._Equals(NormalizeValue(other ?? ""));
 
     [GeneratedRegex("\\s|_+")]
     private static partial Regex SeparatorRegex();
