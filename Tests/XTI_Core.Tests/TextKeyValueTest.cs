@@ -14,6 +14,22 @@ public sealed class TextKeyValueTest
     }
 
     [Test]
+    public void ShouldParseWordWithNumberAtTheEnd()
+    {
+        var key = TestKey.Parse("MoveToPermanentV1");
+        Assert.That(key.Value, Is.EqualTo("move_to_permanent_v1"));
+        Assert.That(key.DisplayText, Is.EqualTo("Move To Permanent V1"));
+    }
+
+    [Test]
+    public void ShouldParseWordWithNumberInTheMiddle()
+    {
+        var key = TestKey.Parse("Move1Time");
+        Assert.That(key.Value, Is.EqualTo("move_1_time"));
+        Assert.That(key.DisplayText, Is.EqualTo("Move 1 Time"));
+    }
+
+    [Test]
     public void ShouldIncludeBracketsInDisplayText()
     {
         var key = TestKey.ParseDisplayText("[OnDemand] DoSomething");

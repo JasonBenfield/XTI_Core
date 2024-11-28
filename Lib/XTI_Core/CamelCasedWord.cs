@@ -48,6 +48,6 @@ public sealed partial class CamelCasedWord : IEquatable<CamelCasedWord>, IEquata
 
     public override string ToString() => $"{nameof(CamelCasedWord)} {word}";
 
-    [GeneratedRegex("\\[?(([A-Z]{2,})(?![a-z]+))\\]?|\\[?(([A-Z]{2,})(([a-z]+)))\\]?|\\[?([A-Z]{1}[a-z]+)\\]?|\\[?(\\d+)\\]?|\\[?([a-z]+)\\]?")]
+    [GeneratedRegex("\\[?(([A-Z]{2,})(?![a-z]+))\\]?|\\[?(([A-Z]{2,})(([a-z]+)))\\]?|\\[?([A-Z]{1}[a-z]+)\\]?|\\[?([A-Z]+[a-z]*)?(\\d+)\\]?|\\[?([a-z]+)\\]?")]
     private static partial Regex CamelCasedRegex();
 }
