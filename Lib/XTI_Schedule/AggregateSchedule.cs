@@ -4,7 +4,7 @@ namespace XTI_Schedule;
 
 public sealed class AggregateSchedule
 {
-    private readonly Schedule[] schedules = new Schedule[0];
+    private readonly Schedule[] schedules = [];
 
     public static AggregateSchedule Deserialize(string serialized) =>
         new AggregateSchedule
@@ -14,7 +14,7 @@ public sealed class AggregateSchedule
 
     public AggregateSchedule(params Schedule[] schedules)
     {
-        this.schedules = schedules ?? new Schedule[0];
+        this.schedules = schedules ?? [];
     }
 
     public bool IsInSchedule(DateTimeOffset dateTime)

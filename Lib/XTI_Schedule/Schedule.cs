@@ -41,14 +41,14 @@ public sealed class Schedule
     public static PeriodicScheduleBuilder Every(int frequency) => Build().Every(frequency);
 
     internal Schedule(IDaySchedule daySchedule, params TimeRange[] timeRanges)
-        : this(new[] { daySchedule }, timeRanges)
+        : this([daySchedule], timeRanges)
     {
     }
 
     internal Schedule(IDaySchedule[] daySchedules, params TimeRange[] timeRanges)
     {
-        this.daySchedules = daySchedules ?? new IDaySchedule[0];
-        this.timeRanges = timeRanges ?? new TimeRange[0];
+        this.daySchedules = daySchedules ?? [];
+        this.timeRanges = timeRanges ?? [];
     }
 
     public bool IsInSchedule(DateTime value) => IsInSchedule(new DateTimeOffset(value));
